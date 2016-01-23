@@ -1,4 +1,7 @@
 # lionsmatter
+
+<img src="https://github.com/mchlmicy/lionsmatter/blob/master/screenshot.png" alt="Demo" width="100%" border="10" />
+
 **Description**: A social media solution to campus issues for TCNJ.
 
 **Background** 
@@ -11,8 +14,4 @@ LionsMatter is a service where students can publically express their concerns, c
 * Students are authenticated via their school emails or the school's authentication system.
 * Administrators can respond to student posts as super users with their own backend interface and dashboard.
 
-**Mobile Demo**: https://www.youtube.com/watch?v=mY-6S2voPaQ
-
-
-
-
+**Mobile Demo**: <a href="https://www.youtube.com/watch?v=mY-6S2voPaQ" target="_blank"></a>
