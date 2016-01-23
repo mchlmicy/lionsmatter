@@ -3,7 +3,7 @@
 
 **Background** 
 
-LionsMatter is a service where students can publically express their concerns, comments, and suggestions. These posts can then be voted and commented on by other students, helping the College to better gauge where its attention and priorities should be. This system goes one step further than most; instead of leaving posts to sit and fade into obscurity, they are instead delegated to specific College departments in a weekly email known as the "LionsMatter Weekly Rundown". This bridges communication between students and the College by bringing concerns and suggestions directly to the inbox of the appropriate person. Departments are then given the opportunity to respond to each post, creating a new standard in transparency by showing students how feedback is handled and that their voices have been heard. (Quoted from original site)
+LionsMatter is a service where students can publically express their concerns, comments, and suggestions. These posts can then be voted and commented on by other students, helping the College to better gauge where its attention and priorities should be. This system goes one step further than most; instead of leaving posts to sit and fade into obscurity, they are instead delegated to specific College departments in a weekly email known as the "LionsMatter Weekly Rundown".  (Quoted from original site)
 
 
 **Features** 
