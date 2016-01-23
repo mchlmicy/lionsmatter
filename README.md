@@ -1,8 +1,8 @@
 # lionsmatter
 
-<img src="https://github.com/mchlmicy/lionsmatter/blob/master/screenshot.png" alt="Demo" width="100%" border="10" />
+A social media solution to campus issues for TCNJ.
 
-**Description**: A social media solution to campus issues for TCNJ.
+<img src="https://github.com/mchlmicy/lionsmatter/blob/master/screenshot.png" alt="Demo" width="100%" border="10" />
 
 **Background** 
 
