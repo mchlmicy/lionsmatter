@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}LionsMatter | Help{% endblock %}
+{% block content %}
+	<div class="container top">
+    	<div class="row-fluid jumbotron">
+            <h1>Help</h1>
+            <p class="lead">The answers to all of your questions about using LionsMatter.</p>
+            <style>.menu a:hover{text-decoration: none;}</style>
+            <center class="text-muted menu" style="font-size: 14px">
+               	<mobile>
+                	<div><a href="#passwordrecovery">Password Recovery</a> &bull; <a href="#postinganonymously">Posting Anonymously</a></div>
+                   	<div><a href="#postingtofeed">Posting to a Feed</a> &bull; <a href="#postas">Setting your "Post as" Name</a></div>
+                    <div><a href="#signin">Signin: CAS vs LionsMatter</a> &bull; <a href="#submitaproblem">Submit Problems</a></div>
+                </mobile>
+                <desktoptablet>
+            		<div><a href="#passwordrecovery">Password Recovery</a> &bull; <a href="#postinganonymously">Posting Anonymously</a> &bull; <a href="#postingtofeed">Posting to a Feed</a></div>
+                	<div><a href="#postas">Setting your "Post as" Name</a> &bull; <a href="#signin">Signin: CAS vs LionsMatter</a> &bull; <a href="#submitaproblem">Submit Problems</a></div>
+               	</desktoptablet>
+            </center>
+        </div>
+        <div class="row-fluid lead">
+         	<div class="col-sm-12">
+               	<center>
+                   	<p>The help page is intended to aid users in understanding how to interact with LionsMatter in an organized and understandable way. The topics below represent what we think are the most integral parts of the website.</p>
+           		</center>
+          	</div>
+      	</div>
+        <hr id="passwordrecovery" style="margin: 50px 0px"/>
+       	<div class="row-fluid"> 
+        	<div class="col-sm-12">
+            	<center>
+                	<h1>Password Recovery</h1>
+                    <div class="col-sm-12">In the case that you forget your LionsMatter password, you can reset it using password recovery. You can recover your lost password <a href="{% url 'password_reset' %}">here</a>. Through the process of recovering your password we will email you a unique link telling you where you can set your new password.</div>
+                </center>
+            </div>
+        </div>
+        <hr id="postinganonymously" style="margin: 50px 0px"/>
+       	<div class="row-fluid"> 
+        	<div class="col-sm-12">
+            	<center>
+                	<h1>Posting Anonymously</h1>
+                    <div class="col-sm-12">
+                    	The option to post anonymously is always available on both posts and comments. While anonymous posts and comments WILL NOT link to your profile, they will be visible on your profile. You can find more information on setting your "post as" name to anonymous on this page in the <a href="#postas">Setting your "Post as" Name</a> section. 
+                    </div>
+                </center>
+            </div>
+        </div>
+        <hr id="postingtofeed" style="margin: 50px 0px"/>
+       	<div class="row-fluid"> 
+        	<div class="col-sm-12">
+            	<center>
+                	<h1>Posting to a Feed</h1>
+                    <div class="col-sm-12">
+                    	You can submit posts from any of the feeds pages or your own profile. In order to submit a post you must set the department feed you want to post to. The only exception to this is when you are viewing a specific department's feed (in this case the department will be set to the feed you are viewing by default, though you may still change which department you post to). You can set the department feed you are posting to by selecting one from the department dropdown next to the submit button. You WILL NOT be able to submit a post until a department has been selected. 
+                        <br/><br/>
+                        <i>NOTE: If you need help deciding which department feed you should submit a post to, please consult the Feeds section of the About page, located <a href="http://lionsmatter.com/about#feeds">here</a>.</i>
+                    </div>
+                </center>
+            </div>
+        </div>
+        <hr id="postas" style="margin: 50px 0px"/>
+       	<div class="row-fluid"> 
+        	<div class="col-sm-12">
+            	<center>
+                	<h1>Setting your "Post as" Name</h1>
+                    <div class="col-sm-12">
+                    	You can set your "post as" name for all of your comments and posts. Your post as name is the name that gets attached to your comments and posts. The options for post as names include your full name, your unix username, and "anonymous". No matter which post as name you choose, all of you comments and posts will appear on your profile.
+                        <br/><br/>
+                        You can set your default "post as" name on the <a href="http://www.lionsmatter.com/settings">settings</a> page under the privacy section. Your default post as name is the name that will appear on your posts and comments by default. You can change your post as name on a case by case basis when you post and comment as well. To do this, click the post as button (<span class="glyphicon glyphicon-user"></span>) and select the appropriate name. The name you are using to post will appear at the top of the open post as dropdown.
+                    </div>
+                </center>
+            </div>
+        </div>
+        <hr id="signin" style="margin: 50px 0px"/>
+       	<div class="row-fluid"> 
+        	<div class="col-sm-12">
+            	<center>
+                	<h1>Sign in: CAS vs LionsMatter</h1>
+                    <div class="col-sm-12">
+                    	To aid in student adoption of and faith in LionsMatter, we provide two methods of sign in: CAS and LionsMatter site sign in. Whether you choose to sign in through CAS or LionsMatter makes no difference in your interaction with the site; how you sign in comes down to personal preference.
+                    </div>
+                </center>
+            </div>
+        </div>
+        <hr id="submitaproblem" style="margin: 50px 0px"/>
+       	<div class="row-fluid"> 
+        	<div class="col-sm-12">
+            	<center>
+                	<h1>Submit a Problem Report</h1>
+                    <div class="col-sm-12">
+                    	While LionsMatter is an awesome site we acknowledge we acknowledge that it is far from perfect. We've spent months trying to perfect it, but nonetheless users will still encounter problems; we can't foresee everything. To handle these problems there is a <a href="http://www.lionsmatter.com/report">problem report</a> page. Please feel free to submit any problems you run into there so that we can continue to improve your experience on LionsMatter.
+                    	<br/><br/>
+                        <i>Note: The problem report page is not intended to handle site suggestions or opinions, only problems. If you want to tell us what you think of LionsMatter we ask that you do it on the <a href="http://lionsmatter.com/t/lionsmatter">LionsMatter topics</a> page.</i>
+                    </div>
+                </center>
+            </div>
+        </div>
+    </div>
+{% endblock %}

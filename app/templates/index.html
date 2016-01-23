@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags %}
+{% load voting_tags_extended %}
+{% load staticfiles %}
+{% load i18n %}
+{% load get_username %}
+{% load get_category %}
+{% load social_tags %}
+{% block extra_head %}
+    <script src="{% static "js/post-actions_feed.js" %}"></script>
+{% endblock %}
+{% block content %}
+    <div class="container top">
+    	<div class="row-fluid">
+    		<div class="col-sm-4">
+                <desktoptablet>
+                    <div class="panel-group row-fluid" id="menu-desktop" style="margin-bottom: 15px">
+                	    <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <span class="accordion-toggle">
+                                        {% if feed %}{{ feed.title }}{% elif alt_feed %}{{ alt_feed }}{% else %}Feed{% endif %}
+                                    </span>
+                                </h4>
+                            </div>
+                            <div class="feed-list panel-body">
+                                <h6>Agenda <span class='glyphicon glyphicon-question-sign' title="A rundown of posts that will be directed to administration." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="{% url 'agenda' %}">Agenda</a></div>
+                                <div class="title" style="margin-bottom: 15px"><a href="{% url 'agenda_history' %}">History</a></div>
+                                <div class="alert alert-warning" style="border-left: none; border-right: none; border-radius: 0px; margin: 20px -15px 20px -15px">
+                                    <h6>{% trans "Feeds" %}<span class="label label-warning pull-right">{% trans "Updated" %}</span></h6>
+                                    {% for category in categories %}
+                                        <div class="title"><a href="{% url 'feed' feed=category.shortname %}" class="link-colorinherit">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                </div>
+                                <h6>Responses <span class='glyphicon glyphicon-question-sign' title="Responses are comments TCNJ departments or organizations make on user posts." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="/responses/">Responses</a></div>
+                                <hr/>
+                                {% if special_categories %}
+                                    <h6>{% trans "Topics" %} <span class='glyphicon glyphicon-question-sign' title="Topics are submitted by TCNJ departments or organizations." data-toggle="tooltip"></span></h6>
+                                    <script>$('[data-toggle="tooltip"]').tooltip({'show':true, 'placement':'right'});</script>
+                                    {% for category in special_categories %}
+                                        <div class="title"><a href="{% url 'special-feed' feed=category.shortname %}">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </desktoptablet>
+            </div>
+		   	<div class="col-sm-8">
+                {% if site_messages %}
+            	    <div id="site-messages" class="row-fluid alert alert-info alert-dismissable">
+                	    <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="$.ajax({url:'/sitemessages/close/'})">&times;</button>
+                        {% autoescape off %}
+                        {% for message in site_messages %}
+            			    {% if forloop.counter == 1 %}
+                                <div id="site-message-{{ forloop.counter }}">
+                                    <h4>{{ message.title }}</h4>
+                                    <p>{{ message.content }}</p>
+                                </div>
+                       	    {% else %}
+                        	    <div id="site-message-{{ forloop.counter }}" style="display: none">
+                                    <h4>{{ message.title }}</h4>
+                                    <p>{{ message.content }}</p>
+                                </div>
+                      	    {% endif %}
+            		    {% endfor %}
+                        {% endautoescape %}
+                        <div style="height: 20px"><span class="pull-right" style="margin-right: -21px"><span class="glyphicon glyphicon-chevron-left" style="cursor: pointer; margin-right: 9px" onclick="siteMessage('previous')"></span><strong><span id="site-messages-currentslide">1</span> of <span id="site-messages-total">{{ site_messages|length }}</span></strong><span class="glyphicon glyphicon-chevron-right" style="cursor: pointer; margin-left: 9px" onclick="siteMessage('next')"></span></span></div>
+                    </div>
+                {% endif %}
+                <mobile>
+                    <div class="panel panel-default" id="menu" style="margin-bottom: 12px">
+                        <div class="panel-heading" data-toggle="collapse" data-parent="#menu" href="#feeds" style="border-color: transparent; cursor: pointer">
+                            <h4 class="panel-title">
+                                <span class="accordion-toggle">
+                                    {% if feed %}{{ feed.title }}{% elif alt_feed %}{{ alt_feed }}{% else %}Feed{% endif %}
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="feeds" class="panel-collapse collapse">
+                            <div class="feed-list panel-body">
+                                <h6>Agenda <span class='glyphicon glyphicon-question-sign' title="A rundown of posts that will be directed to administration." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="{% url 'agenda' %}">Agenda</a></div>
+                                <div class="title"><a href="{% url 'agenda_history' %}">History</a></div>
+                                <div class="alert alert-warning" style="border-left: none; border-right: none; border-radius: 0px; margin: 20px -15px 20px -15px">
+                                    <h6>{% trans "Feeds" %}<span class="label label-warning pull-right">{% trans "Updated" %}</span></h6>
+                                    {% for category in categories %}
+                                        <div class="title"><a href="{% url 'feed' feed=category.shortname %}" class="link-colorinherit">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                </div>
+                                <h6>Responses <span class='glyphicon glyphicon-question-sign' title="Responses are comments TCNJ departments or organizations make on user posts." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="/responses/">Responses</a></div>
+                                <hr/>
+                                {% if special_categories %}
+                                    <h6>{% trans "Topics" %} <span class='glyphicon glyphicon-question-sign' title="Topics are submitted by TCNJ departments or organizations." data-toggle="tooltip"></span></h6>
+                                    <script>$('[data-toggle="tooltip"]').tooltip({'show':true, 'placement':'right'});</script>
+                                    {% for category in special_categories %}
+                                        <div class="title"><a href="{% url 'special-feed' feed=category.shortname %}">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </mobile>
+                <select class="selectpicker" style="background-color: #f5f5f5" data-width="100%" id="id_sort" name="sortpicker" style="display: none;">
+                    <option value="recent">Recent</option>
+                   	<option value="popularity">Popularity</option>
+                   	<option value="highest">Highest Voted</option>
+                    <option value="lowest">Lowest Voted</option>
+                </select>
+                <script>
+					$('.selectpicker').selectpicker();
+					$('.bootstrap-select .dropdown-toggle').css('background-color', '#f5f5f5');
+                    {% if sort %}
+                    $( document ).ready(function() {
+                        $("select[name=sortpicker]").val('{{ sort }}');
+                        $('.bootstrap-select .filter-option').text('{{ sort|capfirst }}');
+                    });
+                    {% endif %}
+    			</script>
+        		{% if user.is_authenticated and user.is_active %}
+                	<div id="post-textarea" class="row-fluid well" style="margin-bottom: 9px">
+                    	<form action="{% url 'post' %}" enctype="multipart/form-data" method="post" target="uploadFrame" id="postForm">
+                        	{% csrf_token %}
+                            {% render_field form.post|attr:"rows:3" class+="form-control" %}
+                      		{% render_field form.category id="category_input" %}
+                            {% render_field form.user_displayname id="privacy_input" value=settings.display_name %}
+                         	{% render_field form.vine %}
+                            <div class="buttonpanel">
+                                <div class="btn-group pull-left">
+                                    <div class="btn-group">   
+                                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+                                            <span class="glyphicon glyphicon-user"></span> <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu pull-left">
+                                            <li class="dropdown-header">{% trans "Post as" %}</li>
+                                            <li><a href="#" id="postAs">{{ settings.display_name }}</a></li>
+                                            <hr/>
+                                            <li class="dropdown-header">{% trans "Options" %}</li>
+                                            {% if settings.full_name %}
+                                                <li><a href="#" onclick="$('#postAs').text('{{ settings.full_name }}'); $('#privacy_input').val('{{ settings.full_name }}')">{{ settings.full_name }}</a></li>
+                                            {% endif %}
+                                            <li><a href="#" onclick="$('#postAs').text('{{ user.username }}'); $('#privacy_input').val('{{ user.username }}')">{{ user.username }}</a></li>
+                                            <li><a href="#" onclick="$('#postAs').text('anonymous'); $('#privacy_input').val('anonymous')">{% trans "anonymous" %}</a></li>
+                                        </ul>
+                                  	</div>
+                                    <div class="btn-group">
+                                        <button class="btn btn-default dropdown-toggle" style="border-left: none" data-toggle="dropdown" type="button">
+                                            <span class="glyphicon glyphicon-camera"></span> <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu pull-left">
+                                            <li class="dropdown-header">Media Options</li>
+                                        	<li><a href="#" onclick="document.getElementById('id_image').click(); return false">Photo</a></li>
+                                            <script>var vineModalJSON_input = '{"form-id": "id_vine"}';</script>
+                                            <li><a href="#" onclick="modalCustom('vine-popup_input', vineModalJSON_input)">Vine</a></li>
+                                        </ul>
+                                        {% render_field form.image style="display: none" %}
+                                    </div>
+                                </div>
+                                <div class="dropdown btn-group pull-right">
+                                    <div class="btn-group">
+                                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+                                            <span id="submitTo">{% if feed and feed.shortname != 'all' %}{{ feed.title }}{% else %}Department{% endif %}</span> <span class="caret"></span>
+                                            {% if feed and feed.shortname != 'all' %}<script type="text/javascript">$('#category_input').val('{{ feed.id }}'); $('#id_post').keyup(function(){$('#submitPost').removeClass('disabled');});</script>{% endif %}
+                                        </button>
+                                        <ul class="dropdown-menu pull-right">
+                                            <li class="dropdown-header">{% trans "Submit to" %}</li>
+                                            {% for category in categories %}
+                                                {% if category.id == 1 %}{% else %}
+                                            		<li><a href="#" onclick="$('#submitTo').text('{{ category.title }}'); $('#submitPost').removeClass('disabled'); $('#category_input').val('{{ category.id }}')">{{ category.title }}</a></li>
+                                            	{% endif %}
+                                          	{% endfor %}
+                                       	</ul>
+                                        <input id="submitPost" class="btn btn-primary disabled" style="height: 33px" type="submit" value="Submit"></input>
+                                    </div>
+                              	</div>
+                            </div>
+                            <script src="{% static "js/submitPost.js" %}"></script>
+                            <div id="contentWrapper"></div>
+                            <div id="errorWrapper"></div>
+                        </form>
+					</div>
+                {% endif %}
+				<div id='recent_posts'>
+                    {% if recent_posts %}
+                        {% include page_template %}
+                        {% block js %}
+                            {{ block.super }}
+                            <script src="{% static 'js/endless-pagination.js' %}"></script>
+                            <script>$.endlessPaginate({paginateOnScroll: true,paginateOnScrollMargin: 500});</script>
+                        {% endblock %}
+                    {% else %}
+                        <div class="alert alert-info">{% trans "No posts were found." %}</div>
+                    {% endif %}
+            	</div>
+    		</div>
+      	</div>
+   	</div>
+    <script src="{% static "js/feed-menu-collapse.js"%}"></script>
+    <script src="{% static "js/site-messages.js"%}"></script>
+{% endblock %}

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags %}
+{% load staticfiles %}
+{% load i18n %}
+{% load get_username %}
+{% load get_category %}
+{% block title %}LionsMatter | About{% endblock %}
+{% block content %}
+    <link rel="stylesheet" href="{% static "css/about.css" %}">
+    <div class="container top info">
+        <div class="row-fluid">
+            <div class="col-md-12">
+                <div class="jumbotron has-tray">
+                    <div class="jumbotron-image" style="display: inline-block; float: left">
+                        <img src="{% static "img/logo/lionsmatter_logo.png" %}"/>
+                    </div>
+                    <div style="display: inline-block; line-height: 1">
+                        <h1 style="margin-bottom: 0px; margin-left: 19px">About</h1>
+                        <desktoptablet style="font-size: 14px; line-height: 1; margin-left: 19px"><span class="text-muted nav-menu" style="font-weight: 500"><a class="menu-link link-drkgray" href="#" data-navtarget="account">Account</a> &bull; <a class="menu-link link-drkgray" href="#" data-navtarget="feedback">Feedback</a> &bull; <a class="menu-link link-drkgray" href="#" data-navtarget="feeds">Feeds</a> &bull; <a class="menu-link link-drkgray" href="#" data-navtarget="posts">Posts</a> &bull; <a class="menu-link link-drkgray" href="#" data-navtarget="contact">Contact</a></span></desktoptablet>
+                    </div>
+                </div>
+                <mobile>
+                    <div class="btn-group btn-group-justified nav-menu_mobile">
+                        <a href="#" class="btn btn-default menu-link" data-navtarget="account">Account</a>
+                        <a href="#" class="btn btn-default menu-link" data-navtarget="feedback" style="width: 1.15%">Feedback</a>
+                        <a href="#" class="btn btn-default menu-link" data-navtarget="feeds">Feeds</a>
+                        <a href="#" class="btn btn-default menu-link" data-navtarget="posts">Posts</a>
+                        <a href="#" class="btn btn-default menu-link" data-navtarget="contact">Contact</a>
+                    </div>
+                </mobile>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px 15px">
+            <div class="col-sm-8" style="padding: 0px">
+                <div class="lead" style="margin: 20px 0px">
+                    <p>LionsMatter is a platform for the TCNJ community to publicly express concerns, comments, and suggestions. These posts can then be voted and commented on by other students, helping the College to better understand where its attention and priorities should be.<br/><mobile style="margin-top: 24px; text-align: center"><img style="" src="{% static "img/logo/sg_logo.png" %}"/></mobile><br/> Instead of leaving posts to sit and fade into obscurity, LionsMatter works with TCNJ's Student Government to delegate posts to specific College departments. Departments are then given the opportunity to respond to each post, creating a new standard in transparency by showing how feedback is handled.</p>
+                </div>
+            </div>
+            <desktoptablet>
+                <div class="col-sm-4" style="padding: 0px; text-align: center">
+                    <img style="display: inline-block; margin-top: 36px" src="{% static "img/logo/sg_logo.png" %}"/>
+                </div>
+            </desktoptablet>
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-12">
+                <div class="lead intro">
+                    <hr style="margin-bottom: 70px; margin-top: 24px" id="account"/>
+            	    <h1>Account</h1>
+                    <p>Although anyone is welcome to visit the site and search through posts, only users are able to post, comment, or vote. LionsMatter attempts to verify user credentials through systems like TCNJ's CAS authentication while protecting users' privacy when it comes to making posts and comments.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px; padding: 0px 15px">
+            <div class="col-sm-4 subsection">
+                <h2>TCNJ Unix Accounts</h2>
+                <p>We participate in the same open standard that Canvas and PAWS use to sign you in; TCNJ authenticates your account for us so that LionsMatter will never see your password.</p>
+            </div>
+            <div class="col-sm-4 subsection">
+			    <h2>Anonymity is Important</h2>
+			    <p>You should have the right to post anonymously if you choose to. LionsMatter allows users to post anonymously if they wish, while also encouraging users to post free of anonymity.</p>
+			</div>
+            <div class="col-sm-4 subsection">
+                <h2>Rules of the Conversation</h2>
+        	    <p>There are certain expectations of decency between both students and the College. Certain basic rules such as no spam, profanity, offensive material, etc. are enforced through moderation.</p>
+      		</div>
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-12" style="text-align: center"><a href='{% url 'login' %}' class="btn btn-primary btn-block" style="display: inline-block; width: 75%">Login with <b>TCNJ</b></a></div>
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-12">
+                <div class="lead intro">
+                    <hr style="margin-bottom: 70px; margin-top 24px" id="feedback"/>
+                    <h1>Feedback</h1>
+					<p>The mission of LionsMatter is to better connect The College of New Jersey with its students so that a free flow of information can occur. The site maintains a strong level of transparency by showing the route that every post takes from submission to response. The College faculty and staff are encouraged to respond to posts made by students to fuel this dialogue. LionsMatter provides the College with the benefit of a streamlined feedback system, while students benefit from actions that are motivated by their posts.</p>
+            	</div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 20px; padding: 0px 15px">
+            <div class="col-sm-4 subsection">
+                <h2>Post Status Updates</h2>
+                <p>Users receive notifications as their post moves through the LionsMatter process.  Posts are initially sorted by for the relevant College department, and then forwarded to a specific member within that department.  Depending on the subject matter of the post, the staff member may submit a response to your post.</p>
+            </div>
+            <div class="col-sm-4 subsection">
+                 <h2>Responses</h2>
+                 <p>TCNJ department members will routinely respond to posts that are forwarded to them.  The LionsMatter team works closely with departments to ensure posts are responded to in a timely manner, though some resolutions take more time than others.</p>
+            </div>
+            <div class="col-sm-4 subsection">
+                <h2>Mediation</h2>
+                <p>Once a post receives a response, the post's 'Comments' section will serve as a forum for the department member and users to discuss ongoing matters related to the post.</p>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="col-sm-12">
+                <div class="lead intro">
+                    <hr style="margin-bottom: 70px; margin-top: 24px" id="feeds"/>
+                    <h1>Feeds</h1>
+					<p>All posts are sorted into six feeds. Posts in each feed are delegated to the appropriate department within that feed. Only moderators are allowed to delegate posts to TCNJ departments.</p>
+               	</div>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px">
+            <div class="col-md-4">
+                <h2 style="text-align: center">Dining Services</h2>
+			    <p>Posts that deal with the TCNJ Dining Services, their staff, and their on-campus dining locations.</p>
+                <table class="table table-bordered">
+                    <tr><th>Dining Services Departments</th></tr>
+                    <tr><td>TCNJ Dining Services</td></tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <h2 style="text-align: center">Facilities</h2>
+		        <p>Posts that deal with the College's facilities, buildings, and grounds.</p><desktoptablet><br/></desktoptablet>
+                <table class="table table-bordered">
+                    <tr><th>Facilities Departments</th></tr>
+                    <tr><td>Campus Construction</td></tr>
+                    <tr><td>Facilities</td></tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <h2 style="text-align: center">ResLife</h2>
+		        <p>Posts dealing with ResEducation & Housing, its residential oversight, policies, and practices.</p>
+                <table class="table table-bordered">
+                    <tr><th>ResLife Departments</th></tr>
+                    <tr><td>Residential Education & Housing</td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px">
+            <div class="col-md-4">
+                <h2 style="text-align: center">Academics</h2>
+                <p>Posts that deal with the schools within the College, and departments related to academia.</p>
+                <table class="table table-bordered">
+                    <tr><th>Academics Departments</th></tr>
+                    <tr><td>Academic Affairs</td></tr>
+                    <tr><td>Financial Aid</td></tr>
+                    <tr><td>Records and Registration</td></tr>
+                    <tr><td>School of Arts & Communications</td></tr>
+                    <tr><td>School of Business</td></tr>
+                    <tr><td>School of Education</td></tr>
+                    <tr><td>School of Engineering</td></tr>
+                    <tr><td>School of Humanities & Social Sciences</td></tr>
+                    <tr><td>School of Nursing, Health, & Exercise Science</td></tr>
+                    <tr><td>School of Science</td></tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <h2 style="text-align: center">Student Services</h2>
+			    <p>Posts that deal with the services the College offers to students.</p><desktoptablet><br/></desktoptablet>
+                <table class="table table-bordered">
+                    <tr><th>Student Services Departments</th></tr>
+                    <tr><td>ADEP (Alcohol & Drug Education Program)</td></tr>
+                    <tr><td>Anti-Violence Initiatives</td></tr>
+                    <tr><td>Athletics</td></tr>
+                    <tr><td>Bookstore</td></tr>
+                    <tr><td>Career Center</td></tr>
+                    <tr><td>Differing Abilities Services</td></tr>
+                    <tr><td>Information Technology</td></tr>
+                    <tr><td>Library</td></tr>
+                    <tr><td>Mailing and Receiving Services</td></tr>
+                    <tr><td>Networking and Technical Services</td></tr>
+                    <tr><td>Parking Services</td></tr>
+                    <tr><td>Physical Enhancement Center</td></tr>
+                    <tr><td>Student Activities</td></tr>
+                    <tr><td>- College Union Board (CUB)</td></tr>
+                    <tr><td>- Student Finance Board (SFB)</td></tr>
+                    <tr><td>- Student Government (SG)</td></tr>
+                    <tr><td>- The Signal</td></tr>
+                    <tr><td>Student Health Services</td></tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <h2 style="text-align: center">Administration</h2>
+			    <p>Posts dealing with the College's administrative departments, Board of Trustees, & campus police.</p>
+                <table class="table table-bordered">
+                    <tr><th>Administration Departments</th></tr>
+                    <tr><td>Alumni Affairs</td></tr>
+                    <tr><td>Board of Trustees</td></tr>
+                    <tr><td>Campus Police</td></tr>
+                    <tr><td>College Governance</td></tr>
+                    <tr><td>Office of the President</td></tr>
+                    <tr><td>Student Accounts</td></tr>
+                    <tr><td>Student Employment</td></tr>
+                    <tr><td>TCNJ Center for the Arts</td></tr>
+                </table>
+           	</div>
+        </div>
+        <div class="row" style="margin: 0px 15px">
+            <hr style="margin-bottom: 70px; margin-top: 24px" id="posts"/>
+            <div class="col-md-12" style="padding: 0px">
+                <div class="lead intro">
+                    <h1>Posts</h1>
+                    <div class="col-md-8" style="padding: 0px">
+                        <p>There are only three fields that users need to fill when submitting a post: content, category, and type. Users can post their questions, comments, and concerns in the content of the post. The post category allows the user to help in the sorting process by choosing where a post should be delegated. The post type allows the user to state whether their post is a comment, concern, or suggestion. Additionally, media submissions in the form of photos and Vines are accepted.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="{% static "img/about/posts.png" %}" width="100%"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px">
+            <div class="col-sm-4 subsection">
+                <h2>"Post as"</h2>
+                <p>Each post or comment allows you to select the name that will be associated with it; either your full name, your username, or simply 'anonymous.'</p>
+            </div>
+            <div class="col-sm-4 subsection">
+                <h2>Post History</h2>
+                <p>Post history is a feature implemented to show the history of a post in the context of a conversation between the user who posted and the department that responded. By including post history a certain level of transparency is maintained and users can see that the College is actively engaged in this conversation.</p>
+            </div>
+            <div class="col-sm-4 subsection">
+                <h2>Moderating</h2>
+                <p>Although posts appear immediately, Student Government reserves the right to flag posts that contain obscene content or profanity; if flagged, a post is made un-viewable on the site until the user resolves the issue.</p>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-12">
+                <div class="lead intro">
+                    <hr style="margin-bottom: 70px; margin-top: 24px" id="contact"/>
+                    <h1>Contact Us</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px 0px 24px 0px">
+            <div class="col-sm-6" style="text-align: center">
+                <h2>LionsMatter Developers</h2>
+                <h4><a href="mailto:kellyp1@tcnj.edu?subject=LionsMatter">Patrick Kelly</a></h4>
+                <h4><a href="mailto:youngm6@tcnj.edu?subject=LionsMatter">Michael Young</a></h4>
+            </div>
+            <div class="col-sm-6" style="text-align: center">
+                <h2>Student Government</h2>
+                <h4><a href="mailto:sg@tcnj.edu">sg@tcnj.edu</a></h4>
+            </div>
+        </div>
+
+		<script>$('a.menu-link').on('click', function(event){event.preventDefault(); $('html, body').animate({scrollTop: $('#'+$(this).data('navtarget')).offset().top}, 1000);});</script>
+{% endblock %}

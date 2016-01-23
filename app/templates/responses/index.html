@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags %}
+{% load voting_tags_extended %}
+{% load post_tags %}
+{% load staticfiles %}
+{% load i18n %}
+{% load get_username %}
+{% load get_category %}
+{% load social_tags %}
+{% load timestamping %}
+{% block extra_head %}
+	<script>$(document).attr('title', 'LionsMatter | Responses');</script>
+	<link rel="stylesheet" href="{% static "css/agenda-datepicker.css" %}">
+    <link rel="stylesheet" href="{% static "css/feed-history.css" %}">
+{% endblock %}
+{% block content %}
+	<div class="container top">
+    	<div class="row-fluid">
+    		<div class="col-sm-4">
+                <desktoptablet>
+                    <div class="panel-group row-fluid" id="menu-desktop" style="margin-bottom: 15px">
+                	    <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <span class="accordion-toggle">
+                                        {% if feed %}{{ feed.title }}{% elif alt_feed %}{{ alt_feed }}{% else %}Feed{% endif %}
+                                    </span>
+                                </h4>
+                            </div>
+                            <div class="feed-list panel-body">
+                                <h6>Agenda <span class='glyphicon glyphicon-question-sign' title="A rundown of posts that will be directed to administration." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="{% url 'agenda' %}">Agenda</a></div>
+                                <div class="title" style="margin-bottom: 15px"><a href="{% url 'agenda_history' %}">History</a></div>
+                                <div class="alert alert-warning" style="border-left: none; border-right: none; border-radius: 0px; margin: 20px -15px 20px -15px">
+                                    <h6>{% trans "Feeds" %}<span class="label label-warning pull-right">{% trans "Updated" %}</span></h6>
+                                    {% for category in categories %}
+                                        <div class="title"><a href="{% url 'feed' feed=category.shortname %}" class="link-colorinherit">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                </div>
+                                <h6>Responses <span class='glyphicon glyphicon-question-sign' title="Responses are comments TCNJ departments or organizations make on user posts." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="/responses/">Responses</a></div>
+                                <hr/>
+                                {% if special_categories %}
+                                    <h6>{% trans "Topics" %} <span class='glyphicon glyphicon-question-sign' title="Topics are submitted by TCNJ departments or organizations." data-toggle="tooltip"></span></h6>
+                                    <script>$('[data-toggle="tooltip"]').tooltip({'show':true, 'placement':'right'});</script>
+                                    {% for category in special_categories %}
+                                        <div class="title"><a href="{% url 'special-feed' feed=category.shortname %}">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </desktoptablet>
+            </div>
+		   	<div id="agenda-feed" class="col-sm-8">
+                <mobile>
+                    <div class="panel panel-default" id="menu" style="margin-bottom: 12px">
+                        <div class="panel-heading" data-toggle="collapse" data-parent="#menu" href="#feeds" style="border-color: transparent; cursor: pointer">
+                            <h4 class="panel-title">
+                                <span class="accordion-toggle">
+                                    {% if feed %}{{ feed.title }}{% elif alt_feed %}{{ alt_feed }}{% else %}Feed{% endif %}
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="feeds" class="panel-collapse collapse">
+                            <div class="feed-list panel-body">
+                                <h6>Agenda <span class='glyphicon glyphicon-question-sign' title="A rundown of posts that will be directed to administration." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="{% url 'agenda' %}">Agenda</a></div>
+                                <div class="title"><a href="{% url 'agenda_history' %}">History</a></div>
+                                <div class="alert alert-warning" style="border-left: none; border-right: none; border-radius: 0px; margin: 20px -15px 20px -15px">
+                                    <h6>{% trans "Feeds" %}<span class="label label-warning pull-right">{% trans "Updated" %}</span></h6>
+                                    {% for category in categories %}
+                                        <div class="title"><a href="{% url 'feed' feed=category.shortname %}" class="link-colorinherit">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                </div>
+                                <h6>Responses <span class='glyphicon glyphicon-question-sign' title="Responses are comments TCNJ departments or organizations make on user posts." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="/responses/">Responses</a></div>
+                                <hr/>
+                                {% if special_categories %}
+                                    <h6>{% trans "Topics" %} <span class='glyphicon glyphicon-question-sign' title="Topics are submitted by TCNJ departments or organizations." data-toggle="tooltip"></span></h6>
+                                    <script>$('[data-toggle="tooltip"]').tooltip({'show':true, 'placement':'right'});</script>
+                                    {% for category in special_categories %}
+                                        <div class="title"><a href="{% url 'special-feed' feed=category.shortname %}">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </mobile>
+                <div class="scroller_anchor"></div>
+                <div class="panel-group datepicker-container row-fluid">
+                	<div class="panel-pre"></div>
+                    <div id="datepicker-panel" class="panel panel-default">
+                    	<div class="panel-heading collapsed" data-toggle="collapse" data-parent="#datepicker-panel" href="#date-picker">
+                            <h3 class="panel-title datepicker-panel-header"><a id="datepicker-label" data-date="{{ latest_item.status.timestamp|date:"m-d-y" }}">{{ latest_item.status.timestamp|date:"l, F j" }}</a><span class="pull-right glyphicon glyphicon-calendar"></span></h3>
+                        </div>
+                        <div id="date-picker" class="{% if recent_responses %}collapse{% else %}collapsing{% endif %}">
+                        	<div class="datepicker-header row-fluid">
+                               	<strong><center id="datepicker-monthlabel">{{ latest_item.status.timestamp|date:"F" }}</center></strong>
+                            </div>
+                            <center>
+                            	<div class="datepicker-calendar row-fluid">
+                                   	<span class="datepicker-next" data-nextwk="{{ next_sunday|date:"m-d-Y" }}">
+                                        <span class="glyphicon glyphicon-chevron-right"></span>
+                                    </span>
+                                    {% for date in current_week reversed %}
+                                    <span class="datepicker-day">
+                                        <a href="#{{ date|date:"m-d-Y" }}">
+                                     		<center>
+                                           		<div class="datepicker-day-dotw"><strong><mobile>{{ date|date:"D"|slice:':1' }}</mobile><desktoptablet>{{ date|date:'D' }}</desktoptablet></strong></div>
+                                             	<div class="datepicker-day-body">{{ date|date:"j" }}</div>
+                                       		</center>
+                                   		</a>
+                                   	</span>
+                                    {% endfor %}
+                                    <span class="datepicker-previous" data-previouswk="{{ prev_sunday|date:"m-d-Y" }}">
+                                        <span class="glyphicon glyphicon-chevron-left"></span>
+                                    </span>
+                                </div>
+                           	</center>
+                        </div>
+             		</div>
+               	</div>
+        		<div id='recent_posts'>
+                    <div id="history_feed">
+                    {% regroup recent_responses|dictsort:"date" by date as recent_responses_sorted %}
+                        {% for responses in recent_responses_sorted reversed %}
+                            {% if forloop.first %}
+                            <div class="history-date"><a id="{{ responses.grouper|date:"m-d-Y" }}" data-date="{{ responses.grouper|date:"l, F j" }}"></a></div>
+                            {% else %}
+                            <div class="well history-date"><a id="{{ responses.grouper|date:"m-d-Y" }}" data-date="{{ responses.grouper|date:"l, F j" }}"><h4>{{ responses.grouper|date:"l, F j" }}</h4></a></div>
+                            {% endif %}
+                            {% for response in responses.list %}
+                                <div id="post-{{response.post.id}}-{{ response.status_recipient_response_obj.id }}" class="row-fluid post">
+                               	    <div class="post-body collapse">
+                                        {% score_for_object response.post as score %}
+                                        {% vote_by_user user on response.post as vote %}
+                                        <div class="vote {% if response.post.is_gold %}gold{% elif score.score > 0 %}positive{% elif score.score < 0 %}negative{% elif score.score == 0 %}neutral{% endif %}" id="votebox-{{ response.post.id }}">
+                                            <a href="#" onclick="event.preventDefault(); vote('{{ response.post.id }}', 'up')">
+                                                <div class="arrow-up {% if vote.vote == 1 %}voted{% endif %}"><span class="glyphicon glyphicon-arrow-up"></span></div>
+                                            </a>
+                                            <hr class="divider"/>
+                                            <div class="votes" id="votes-{{ response.post.id }}">{{ score.score|default:0 }}</div>
+                                            <hr class="divider"/>
+                                            <a href="#" onclick="event.preventDefault(); vote('{{ response.post.id }}', 'down')">
+                                                <div class="arrow-down {% if vote.vote == -1 %}voted{% endif %}"><span class="glyphicon glyphicon-arrow-down"></span></div>
+                                            </a>
+                                        </div>
+                                        <div class="post-content">
+                                            <div class="post-header">
+                                                <div class="category">
+                                                    <a href="{% url 'feed' feed=response.post.category.shortname %}">{{ response.post.category.title }}</a>
+                                                </div>
+                                                <div style="float: right">
+                                                    <div class="badge-box">
+                                                        {% if user in response.post.followers.all %}
+                                                            <a href="#" class="modal-custom label label-warning" onclick="modalCustom('alert-followBadge')" style="vertical-align: bottom" title="{{ unotified_comment_count }} new comment{{ unotified_comment_count|pluralize }}. | You are following this post.">{{ unotified_comment_count }} <span class="glyphicon glyphicon-user" style="vertical-align: bottom"></span></a>
+                                                        {% endif %}
+                                                        {% if response.post.is_gold %}
+                                                            <a href="#" class="modal-custom label label-primary" onclick="modalCustom('alert-goldBadge')" style="vertical-align: bottom" title="This post has been nominated for administration response."><span class="glyphicon glyphicon-star" style="vertical-align: bottom"></span></a>
+                                                        {% elif response.post.status.status_code.id >= 4 %}
+                                                            <a href="#" class="modal-custom label label-primary" onclick="modalCustom('alert-responseBadge')" style="vertical-align: bottom" title="There has been an administration response to this post."><span class="glyphicon glyphicon-envelope" style="vertical-align: bottom"></span></a>
+                                                        {% endif %}
+                                                    </div>
+                                                    <a href="#" class="sort-box timestamp-natural" onclick="expandSortBox($(this))">
+                                                        <div class="sort-data" data-name="timestamp-natural">{{ response.post.timestamp|toNaturalTime }}</div>
+                                                        <div class="sort-data" data-name="timestamp-split" style="display: none">
+                                                            {{ response.post.timestamp|lineSplitTime:1 }}<br/>
+                                                            {{ response.post.timestamp|lineSplitTime:2 }}
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <a class="lead" href="{% url 'post' post_id=response.post.id %}/c{{ response.status_recipient_response_obj.id }}">{{ response.post.post|dynamic_content }}</a>
+                                            <div class="post-footer">
+                                                <div class="expand-post">
+                                                    <a href="#" class="btn btn-default btn-expand post-option" style="outline: 0" data-expanded="false" onclick="postOption('expand', '{{response.post.id}}-{{ response.status_recipient_response_obj.id }}', $(this))"title="Expand"><span class="glyphicon glyphicon-plus" style="vertical-align: middle"></span></a>
+                                                </div>
+                                                <div class="footer-content">
+                                                    {% if response.post.user_displayname != 'anonymous' %}
+                                                        <a class="signature" href="{% url 'userprofile' username=response.post.user.username %}">{{ response.post.user_displayname }}</a>
+                                                    {% else %}
+                                                        <a class="signature modal-custom" href="#" onclick="modalCustom('alert-anonymousPrivacy')">{{ response.post.user_displayname }}</a>
+                                                    {% endif %}
+                                                    <div class="button-row">
+                                                        <span class="primary-container"><a href="#" class="footer-btn post-option" data-expanded="false" onclick="postOption('details', {{ response.post.id }}, $(this))">Details</a></span>
+                                                        <span class="secondary-container" style="display: none">
+                                                            <desktoptablet>Posted on {{ response.post.timestamp|simplifyTimestamp }} &mdash;</desktoptablet><mobile>{{ response.post.timestamp }} -</mobile>
+                                                            Votes: {% get_upvotes response.post.id %}<span class="glyphicon glyphicon-arrow-up"></span> {% get_downvotes response.post.id %}<span class="glyphicon glyphicon-arrow-down"></span>
+                                                        </span>
+                                                        {% get_comment_count for response.post as comment_count %}
+                                                        <script>var shareModalJSON_post{{ response.post.id }} = '{"site-names": ["Facebook", "Twitter"], "site-links": ["{% shareFacebookM response.post.id response.post.post %}", "{% shareTwitterM response.post.id response.post.category.title %}"]}';</script>
+                                                        <span class="tertiary-container">
+                                                            <a href="{% url 'post' post_id=response.post.id %}" class="footer-btn">Comments {% if comment_count %} ({{ comment_count }}){% endif %}</a>
+                                                            {% if response.post.image %}
+                                                                <script>var photoModalJSON_post{{ response.post.id }} = '{"display_name": "{{ response.post.user_displayname }}", "profile": "{% if response.post.user_displayname != 'anonymous' %}{% url 'userprofile' username=response.post.user.username %}{% endif %}", "timestamp": "{{ response.post.timestamp|naturaltime }}", "timestamp-alt": "{{ response.post.timestamp|simplifyTimestamp }}", "photo_url": "{{ response.post.image_large.url }}"}'</script>
+                                                                <a href="#" class="modal-custom footer-btn" onclick="modalCustom('photo-popup', photoModalJSON_post{{ response.post.id }})">Photo</a>
+                                                            {% elif response.post.vine %}
+                                                                <script>var vineModalJSON_display{{ response.post.id }} = '{"display_name": "{{ response.post.user_displayname }}", "profile": "{% if response.post.user_displayname != 'anonymous' %}{% url 'userprofile' username=response.post.user.username %}{% endif %}", "timestamp": "{{ response.post.timestamp|naturaltime }}", "timestamp-alt": "{{ response.post.timestamp|simplifyTimestamp }}", "vine_url": "{{ response.post.vine }}"}';</script>
+                                                                <a href="#" class="modal-custom footer-btn" onclick="modalCustom('vine-popup_display', vineModalJSON_display{{ response.post.id }})">Vine</a>
+                                                            {% endif %}
+                                                            {% if user.is_authenticated and response.post.user != user %}<a href="#" class="footer-btn post-option" data-following="{% if user in response.post.followers.all %}true{% else %}false{% endif %}" onclick="postOption('follow', {{ response.post.id }}, $(this))" title="{% if user in response.post.followers.all %}Stop receiving updates on this post.{% else %}Receive updates on this post.{% endif %}">{% if user in response.post.followers.all %}Unfollow{% else %}Follow{% endif %}</a>{% endif %}
+                                                            <a href="#" class="footer-btn modal-custom" onclick="modalCustom('share-popup', shareModalJSON_post{{ response.post.id }})" title="Share this post on social media.">Share</a>
+                                                            {% if user.is_authenticated and user.id == response.post.user_id %}<a href="#" class="footer-btn delete-post" data-id="{{ response.post.id }}">{% trans "Delete" %}</a>{% endif %}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="post-comment">
+                                        <div class="post-content">
+                                            <div class="post-header">
+                                                <div class="category">
+                                                    <a href="{% url 'feed' feed=response.post.category.shortname %}">{{ response.post.category.title }}</a>
+                                                </div>
+                                                <div style="float: right">
+                                                    <div class="badge-box">
+                                                        {% if user in response.post.followers.all %}
+                                                            <a href="#" class="modal-custom label label-warning" onclick="modalCustom('alert-followBadge')" style="vertical-align: bottom" title="{{ unotified_comment_count }} new comment{{ unotified_comment_count|pluralize }}. | You are following this post.">{{ unotified_comment_count }} <span class="glyphicon glyphicon-user" style="vertical-align: bottom"></span></a>
+                                                        {% endif %}
+                                                        {% if response.post.is_gold %}
+                                                            <a href="#" class="modal-custom label label-primary" onclick="modalCustom('alert-goldBadge')" style="vertical-align: bottom" title="This post has been nominated for administration response."><span class="glyphicon glyphicon-star" style="vertical-align: bottom"></span></a>
+                                                        {% elif response.post.status.status_code.id >= 4 %}
+                                                            <a href="#" class="modal-custom label label-primary" onclick="modalCustom('alert-responseBadge')" style="vertical-align: bottom" title="There has been an administration response to this post."><span class="glyphicon glyphicon-envelope" style="vertical-align: bottom"></span></a>
+                                                        {% endif %}
+                                                    </div>
+                                                    <a href="#" class="sort-box timestamp-natural" onclick="expandSortBox($(this))">
+                                                        <div class="sort-data" data-name="timestamp-natural">{{ response.status_recipient_response_obj.submit_date|toNaturalTime }}</div>
+                                                        <div class="sort-data" data-name="timestamp-split" style="display: none">
+                                                            {{ response.status_recipient_response_obj.submit_date|lineSplitTime:1 }}<br/>
+                                                            {{ response.status_recipient_response_obj.submit_date|lineSplitTime:2 }}
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <span class="lead">
+                                                <blockquote style="margin-bottom: 0px; padding-right: 0px">
+                                                    <div class="titlebar">{% if response.status_recipient_response_obj.user_name != 'anonymous' %}{% if response.status_recipient_response_obj.user.get_profile.department %}<script>var departmentModalJSON_comment{{ response.status_recipient_response_obj.id }} = '{"fullname": "{{ response.status_recipient_response_obj.user.get_profile.full_name }}", "profile": "{% url "userprofile" username=response.status_recipient_response_obj.user.username %}", "position": "{{ response.status_recipient_response_obj.user.get_profile.staff_position }}", "department": "{{ response.status_recipient_response_obj.user.get_profile.department }}", "bio": "{{ response.status_recipient_response_obj.user.get_profile.bio }}", "address": "{{ response.status_recipient_response_obj.user.get_profile.department.address }}", "email": "{{ response.status_recipient_response_obj.user.get_profile.department.email }}", "phone": "{{ response.status_recipient_response_obj.user.get_profile.department.phone }}"}';</script><a href="#" style="font-weight: bold; margin-right: 9px" class="modal-custom" onclick="modalCustom('department-badge', departmentModalJSON_comment{{ response.status_recipient_response_obj.id }})">{{ response.status_recipient_response_obj.user.get_profile.full_name }}</a><span class="label label-default">{{ response.status_recipient_response_obj.user.get_profile.department }}</span>{% else %}<a href="{% url 'userprofile' username=response.status_recipient_response_obj.user %}" class="link-nounderline" style="font-weight: bold">{{ response.status_recipient_response_obj.user_name }}</a>{% endif %}{% else %}<span class="text-muted" style="font-weight: bold">anonymous</span>{% endif %}<span class="text-muted pull-right"><a class="link-muted alt-time" onclick="showAltTimestamp($(this))" href="#" data-alttime="{{ response.status_recipient_response_obj.submit_date|simplifyTimestamp }}" title="{{ response.status_recipient_response_obj.submit_date|simplifyTimestamp }}">{{ response.status_recipient_response_obj.submit_date|toNaturalTime }}</a>{% if user.is_authenticated and user.id == response.status_recipient_response_obj.user_id %}<a href="#" class="close delete-comment" data-id="{{response.status_recipient_response_obj.id}}" style="line-height: .6; margin-left: 6px">&times;</a>{% endif %}</span></div>
+                                                    <a href="#" class="post-option lead-content" data-toggled="off" onclick="postOption('toggle-comment', '{{  response.post.id }}-{{response.status_recipient_response_obj.id }}', $(this))">{{ response.status_recipient_response_obj.comment|linebreaks }}</a>
+                                                    <div class="post-footer">
+                                                        <div class="footer-content">
+                                                            <div class="footerbar">
+                                                                <div class="signature-container">
+                                                                    <script>var departmentModalJSON_comment{{ response.status_recipient_response_obj.id }} = '{"fullname": "{{ response.status_recipient_response_obj.user.get_profile.full_name }}", "profile": "{% url "userprofile" username=response.status_recipient_response_obj.user.username %}", "position": "{{ response.status_recipient_response_obj.user.get_profile.staff_position }}", "department": "{{ response.status_recipient_response_obj.user.get_profile.department }}", "bio": "{{ response.status_recipient_response_obj.user.get_profile.bio }}", "address": "{{ response.status_recipient_response_obj.user.get_profile.department.address }}", "email": "{{ response.status_recipient_response_obj.user.get_profile.department.email }}", "phone": "{{ response.status_recipient_response_obj.user.get_profile.department.phone }}"}';</script>
+                                                                    <a href="#" style="font-weight: bold; margin-right: 9px" class="signature modal-custom" onclick="modalCustom('department-badge', departmentModalJSON_comment{{ response.status_recipient_response_obj.id }})">{{ response.status_recipient_response_obj.user.get_profile.full_name }}</a><span class="label label-default" style="vertical-align: super">{{ response.status_recipient_response_obj.user.get_profile.department }}</span>
+                                                                </div>
+                                                            </div>
+                                                            {% vote_by_user user on response.status_recipient_response_obj as comment_vote %}
+                                                            {% score_for_object response.status_recipient_response_obj as total_likes %}
+                                                            <div class="department-response-rating">
+                                                                <span class="rating-input" data-voted="{% if comment_vote %}{% if comment_vote.vote == 1 %}up{% elif comment_vote.vote == -1 %}down{% endif %}{% else %}none{% endif %}">
+                                                                    {% if comment_vote %}
+                                                                        <a href="#" class="post-option" onclick="postOption('vote-department', {{ response.status_recipient_response_obj.id }}, $(this))" data-votedir="clear">Undo:</a> You found this {% if comment_vote.vote == -1 %}un{% endif %}helpful.
+                                                                    {% else %}
+                                                                        Was this helpful? <a href="#" data-votedir="up" class="post-option" onclick="postOption('vote-department', {{ response.status_recipient_response_obj.id }}, $(this))">Yes</a> / <a href="#" data-votedir="down" class="post-option" onclick="postOption('vote-department', {{ response.status_recipient_response_obj.id }}, $(this))">No</a>
+                                                                    {% endif %}
+                                                                </span><br/>
+                                                                <span class="rating-display"><strong><span class="rating-helpful">{% get_comment_upvotes response.status_recipient_response_obj.id %}</span> of <span class="rating-total">{{ response.status_recipient_response_obj.id|get_comment_total_votes }}</span></strong> <span class='glyphicon glyphicon-user'></span> students found this helpful.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </blockquote>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+            	</div>
+    		</div>
+      	</div>
+   	</div>
+    <script src="{% static "js/agenda-datepicker.js"%}"></script>
+    <script src="{% static "js/post-actions_feed.js"%}"></script>
+    <script src="{% static "js/feed-menu-collapse.js"%}"></script>  
+{% endblock %}

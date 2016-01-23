@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load staticfiles %}
+{% block title %}LionsMatter Timeline{% endblock %}
+{% block extra_head %}
+<script src="{% static "js/timeline-mark.js"%}"></script>
+{% endblock %}
+{% block content %}
+	<body>
+    	<div class="container top">
+        	<div class="row-fluid">
+                <div class="col-sm-12">
+                {% if user.is_staff %}<script>var timelineModalJSON = '{"type_id": "{{ form.type.auto_id }}", "type_name": "{{ form.type.html_name }}", "page_location_id": "{{ form.page_location.auto_id }}", "page_location_name": "{{ form.page_location.html_name }}", "description_id": "{{ form.description.auto_id }}", "description_name": "{{ form.description.html_name }}", "happens_when_id": "{{ form.happens_when.auto_id }}", "happens_when_name": "{{ form.happens_when.html_name }}"}'</script>{% endif %}
+            	<h1>Timeline {% if user.is_staff %}<button class="btn btn-primary pull-right" onclick="modalCustom('timeline-update', timelineModalJSON)">Update Timeline</button>{% endif %}</h1>
+                {% if bugs_and_breaks %}
+                    <h3>Bugs & Breaks</h3>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span3">Location</th>
+                            <th class="span4">Description</th>
+                            <th class="span3">Occurance</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in bugs_and_breaks %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span3\">{{ obj.title }}</td>
+                            <td class=\"span4\">
+                            {{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            <td class=\"span3\">
+                            {{ obj.happens_when }}<br/>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-minus-sign' onclick='mark({{ obj.id }}, "iscomplete")' style='color: #800000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                {% if css %}
+                    <h3>CSS</h3>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span3">Name</th>
+                            <th class="span7">Description</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in css %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span3\">{{ obj.title }}</td>
+                            <td class=\"span7\">{{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-minus-sign' onclick='mark({{ obj.id }}, "iscomplete")' style='color: #800000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                {% if html %}
+                    <h3>HTML</h3>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span3">Name</th>
+                            <th class="span7">Description</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in html %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span3\">{{ obj.title }}</td>
+                            <td class=\"span7\">{{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-minus-sign' onclick='mark({{ obj.id }}, "iscomplete")' style='color: #800000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                {% if js %}
+                    <h3>JavaScript</h3>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span3">Name</th>
+                            <th class="span7">Description</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in js %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span3\">{{ obj.title }}</td>
+                            <td class=\"span7\">{{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-minus-sign' onclick='mark({{ obj.id }}, "iscomplete")' style='color: #800000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                {% if todo %}
+                    <h3>Needs Coding</h3>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span3">Location</th>
+                            <th class="span7">Description</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in todo %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span3\">{{ obj.title }}</td>
+                            <td class=\"span7\">
+                            {{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-minus-sign' onclick='mark({{ obj.id }}, "iscomplete")' style='color: #800000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                {% if python %}
+                    <h3>Python</h3>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span3">Name</th>
+                            <th class="span7">Description</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in python %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span3\">{{ obj.title }}</td>
+                            <td class=\"span7\">{{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-minus-sign' onclick='mark({{ obj.id }}, "iscomplete")' style='color: #800000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                {% if suggestions %}
+                    <h3>Suggestions</h3>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span7">Description</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in suggestions %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span7\">{{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-minus-sign' onclick='mark({{ obj.id }}, "iscomplete")' style='color: #800000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                {% if tail %}
+                    <h3>Tail (Administrative Backend)</h3>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span3">Location</th>
+                            <th class="span7">Description</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in tail %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span3\">{{ obj.page_location }}</td>
+                            <td class=\"span7\">{{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-minus-sign' onclick='mark({{ obj.id }}, "iscomplete")' style='color: #800000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                {% if completed %}
+                    <h1 style="margin-top: 40px">Completed</h1>
+                    <table class="table table-bordered table-striped">
+                    	<tr>
+                        	<th class="span1">#</th>
+                            <th class="span7">Description</th>
+                            {% if user.is_staff %}<th class="span1">Status</th>{% endif %}
+                        </tr>
+                        {% for obj in completed %}
+                        <tr>
+                            <td class=\"span1\">{{ forloop.counter }}</td>
+                            <td class=\"span7\">
+                            {{ obj.description }}<br/>
+                            <small style='color: #808080'>Submitted by {{ obj.submitted_by.get_profile.full_name }} at {{ obj.timestamp }}</small>
+                            </td>
+                            {% if user.is_staff %}<td class='span1'><center><i class='glyphicon glyphicon-ok-sign' onclick='mark({{ obj.id }}, "isnotcomplete")' style='color: #008000'></i></center></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+                </div>
+            </div>
+     	</div>
+    </body>
+{% endblock %}

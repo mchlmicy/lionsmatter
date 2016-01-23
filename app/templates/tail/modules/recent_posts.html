@@ -1,0 +1,155 @@
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags %}
+{% load voting_tags_extended %}
+{% load post_tags %}
+{% load staticfiles %}
+{% load i18n %}
+{% load endless %}
+{% load get_username %}
+{% load social_tags %}
+{% load timestamping %}
+{% load subdomainurls %}
+{% block content %}
+    {% if recent_posts %}
+        {% paginate recent_posts %}
+        {% for post in recent_posts %}
+            <div class="row-fluid post" id="post-{{ post.id }}">
+                <div class="post-body">
+                    {% score_for_object post as score %}
+                    {% vote_by_user user on post as vote %}
+                    <div class="vote {% if post.is_gold %}gold{% elif score.score > 0 %}positive{% elif score.score < 0 %}negative{% elif score.score == 0 %}neutral{% endif %} disabled" id="votebox-{{ post.id }}">
+                        <div class="arrow-up"><span class="glyphicon glyphicon-arrow-up"></span></div>
+                        <hr class="divider"/>
+                        <div class="votes" id="votes-{{ post.id }}">{{ score.score|default:0 }}</div>
+                        <hr class="divider"/>
+                        <div class="arrow-down"><span class="glyphicon glyphicon-arrow-down"></span></div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-header">
+                            <div class="category">
+                                <a href="{% url 'feed' feed=post.category.shortname subdomain=None %}">{{ post.category.title }}</a>
+                            </div>
+                            <div style="float: right">
+                                <div class="badge-box">
+                                    {% if post.is_gold %}
+                                        <a href="#" class="label label-primary modal-custom" onclick="modalCustom('alert-goldBadge')" style="vertical-align: bottom" title="This post has been nominated for administration response."><span class="glyphicon glyphicon-star" style="vertical-align: bottom"></span></a>
+                                    {% elif post.status.status_code.id >= 4 %}
+                                        <a href="#" class="label label-primary modal-custom" onclick="modalCustom('alert-responseBadge')" style="vertical-align: bottom" title="There has been an administration response to this post."><span class="glyphicon glyphicon-envelope" style="vertical-align: bottom"></span></a>
+                                    {% endif %}
+                                </div>
+                                {% if sort and sort != 'recent' %}
+                                    {% if sort == 'popularity' %}
+                                        <a href="#" class="sort-box popularity votes-popularity {% if post.popularity <= 0 %}neutral{% elif post.popularity < 25 %}low{% elif post.popularity < 50 %}rising{% else %}hot{% endif %}" onclick="expandSortBox($(this))" title="{% get_upvotes post.id %} &#x2191; {% get_downvotes post.id %} &#x2193;">
+                                            <div class="sort-data" data-name="votes-popularity">{{ post.popularity }}</div>
+                                            <div class="sort-data" data-name="timestamp-split" style="display: none">
+                                                {{ post.timestamp|lineSplitTime:1 }}<br/>
+                                                {{ post.timestamp|lineSplitTime:2 }}
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <a href="#" class="sort-box votes-split" onclick="expandSortBox($(this))" title="{% get_upvotes post.id %} &#x2191; {% get_downvotes post.id %} &#x2193;">
+                                            <div class="sort-data" data-name="votes-split">
+                                                <div class="upvotes">{% get_upvotes post.id %} <span class="glyphicon glyphicon-arrow-up"></span></div>
+                                                <div class="downvotes">{% get_downvotes post.id %} <span class="glyphicon glyphicon-arrow-down"></span></div>
+                                            </div>
+                                            <div class="sort-data" data-name="timestamp-split" style="display: none">
+                                                {{ post.timestamp|lineSplitTime:1 }}<br/>
+                                                {{ post.timestamp|lineSplitTime:2 }}
+                                            </div>
+                                        </a>
+                                    {%  endif %}
+                                {% else %}
+                                    <a href="#" class="sort-box timestamp-natural" onclick="expandSortBox($(this))">
+                                        <div class="sort-data" data-name="timestamp-natural">{{ post.timestamp|toNaturalTime }}</div>
+                                        <div class="sort-data" data-name="timestamp-split" style="display: none">
+                                            {{ post.timestamp|lineSplitTime:1 }}<br/>
+                                            {{ post.timestamp|lineSplitTime:2 }}
+                                        </div>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <a class="lead" href="{% if post.status.status_code.id == 3 %}{% url 'respond' post_id=post.id subdomain='tail' %}{% else %}{% url 'post' post_id=post.id subdomain='tail' %}{% endif %}">{{ post.post|dynamic_content }}</a>
+                        <div class="post-footer">
+                            <div class="expand-post">
+                                <a href="#" class="btn btn-default btn-expand post-option" data-expanded="false" onclick="postOption('expand', {{  post.id }}, $(this))"title="Expand"><span class="glyphicon glyphicon-plus" style="vertical-align: middle"></span></a>
+                            </div>
+                            <div class="footer-content">
+                                {% if post.user_displayname != 'anonymous' %}
+                                    <a class="signature" href="{% url 'userprofile' username=post.user.username subdomain=None %}">{{ post.user_displayname }}</a>
+                                {% else %}
+                                    <a class="signature modal-custom" href="#" onclick="modalCustom('alert-anonymousPrivacy')">{{ post.user_displayname }}</a>
+                                {% endif %}
+                                <div class="button-row">
+                                    <span class="primary-container"><a href="#" class="footer-btn post-option" data-expanded="false" onclick="postOption('details', {{ post.id }}, $(this))">Details</a></span>
+                                    <span class="secondary-container" style="display: none">
+                                        <desktoptablet>Posted on {{ post.timestamp|simplifyTimestamp }} &mdash;</desktoptablet><mobile>{{ post.timestamp }} -</mobile>
+                                        Votes: {% get_upvotes post.id %}<span class="glyphicon glyphicon-arrow-up"></span> {% get_downvotes post.id %}<span class="glyphicon glyphicon-arrow-down"></span>
+                                    </span>
+                                    {% get_comment_count for post as comment_count %}
+                                    <script>var shareModalJSON_post{{ post.id }} = '{"site-names": ["Facebook", "Twitter"], "site-links": ["{% shareFacebookM post.id post.post %}", "{% shareTwitterM post.id post.category.title %}"]}';</script>
+                                    <span class="tertiary-container">
+                                        <a href="#" class="footer-btn post-option" data-expanded="false" onclick="postOption('comments', {{ post.id }}, $(this))">Comments {% if comment_count %} ({{ comment_count }}){% endif %}</a>
+                                        {% if post.image %}
+                                            <script>var photoModalJSON_post{{ post.id }} = '{"display_name": "{{ post.user_displayname }}", "profile": "{% if post.user_displayname != 'anonymous' %}{% url 'userprofile' username=post.user.username subdomain=None %}{% endif %}", "timestamp": "{{ post.timestamp|naturaltime }}", "timestamp-alt": "{{ post.timestamp|simplifyTimestamp }}", "photo_url": "{{ post.image_large.url }}"}'</script>
+                                            <a href="#" class="footer-btn modal-custom" onclick="modalCustom('photo-popup', photoModalJSON_post{{ post.id }})">Photo</a>
+                                        {% elif post.vine %}
+                                            <script>var vineModalJSON_display{{ post.id }} = '{"display_name": "{{ post.user_displayname }}", "profile": "{% if post.user_displayname != 'anonymous' %}{% url 'userprofile' username=post.user.username subdomain=None %}{% endif %}", "timestamp": "{{ post.timestamp|naturaltime }}", "timestamp-alt": "{{ post.timestamp|simplifyTimestamp }}", "vine_url": "{{ post.vine }}"}';</script>
+                                            <a href="#" class="modal-custom footer-btn" onclick="modalCustom('vine-popup_display', vineModalJSON_display{{ post.id }})">Vine</a>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comments-collapse collapse">
+                        <div class="comments-container">
+                            {% get_comment_list for post as comment_list %}
+                            {% if comment_list %}
+                                {% for comment in comment_list|slice:":5" %}
+                                    <div class="comment">
+                                        <div class="comment-header">
+                                            {% if comment.user_name != 'anonymous' %}
+                                                {% if comment.user.get_profile.department %}
+                                                    <script>var departmentModalJSON_comment{{ comment.id }} = '{"fullname": "{{ comment.user.get_profile.full_name }}", "profile": "{% url "userprofile" username=comment.user.username subdomain=None %}", "position": "{{ comment.user.get_profile.staff_position }}", "department": "{{ comment.user.get_profile.department }}", "bio": "{{ comment.user.get_profile.bio }}", "address": "{{ comment.user.get_profile.department.address }}", "email": "{{ comment.user.get_profile.department.email }}", "phone": "{{ comment.user.get_profile.department.phone }}"}';</script>
+                                                    <a class="modal-custom" href="#" style="font-weight: bold; margin-right: 9px" onclick="modalCustom('department-badge', departmentModalJSON_comment{{ comment.id }})">{{ comment.user.get_profile.full_name }}</a>
+                                                    <span class="label label-default">{{ comment.user.get_profile.department }}</span>
+                                                {% else %}
+                                                    <a href="{% url 'userprofile' username=comment.user subdomain=None %}" class="link-nounderline" style="font-weight: bold">{{ comment.user_name }}</a>
+                                                {% endif %}
+                                            {% else %}<span class="text-muted" style="font-weight: bold">anonymous</span>{% endif %}
+                                            <span class="text-muted pull-right"><a class="link-muted" href="#" onclick="showAltTimestamp($(this))" data-alttime="{{ comment.submit_date|simplifyTimestamp }}" title="{{ comment.submit_date|simplifyTimestamp }}">{{ comment.submit_date|toNaturalTime }}</a>{% if user.is_authenticated and user.id == comment.user_id %}<a href="#" class="close delete-comment" onclick="deleteComment('{{comment.id}}')" style="line-height: .6; margin-left: 6px">&times;</a>{% endif %}</span>
+                                        </div>
+                                        <div class="comment-content" style="margin-bottom: 0px; margin-top: 3px">{{ comment.comment|linebreaks }}</div>
+                                        <div class="comment-footer">
+                                            {% vote_by_user user on comment as comment_vote %}{% score_for_object comment as total_likes %}
+                                            <a href="#" data-liked="{% if comment_vote %}true{% else %}false{% endif %}" onclick="postOption('like-comment', {{ comment.id }}, $(this))">{% if comment_vote %}Undo{% else %}Agree:{% endif %}</a> <span class="helper-text" style="display: {% if comment_vote %}inline-block{% else %}none{% endif %}">You and</span> <strong>{% if comment_vote %}{{ total_likes.score|add:"-1" }}{% else %}{{ total_likes.score }}{% endif %}</strong> <span class="glyphicon glyphicon-user"></span> others agree.
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% if comment_list and comment_list|length > 5 %}
+                                    <div class="comment">
+                                        <div class="comment-content" style="margin-bottom: 0px; margin-top: 3px"></div>
+                                        <div class="comment-footer">
+                                            There are more comments on the <a href="{% url 'post' post_id=post.id subdomain='tail' %}">post page...</a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="comment-container">
+                            <div class="alert alert-info" style="margin: -4px; border-radius: 0px; border-bottom-right-radius: 4px">
+                                <strong>{% trans "Note" %}:</strong> You can respond to this post <a class="link-colorinherit" href="{% url 'respond' post_id=post.id subdomain='tail' %}"><strong>here</strong></a>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% show_more 'Load more posts' ' ' %}
+    {% else %}
+        <div class="alert alert-info">{% trans "No posts were found." %}</div>
+    {% endif %}
+{% endblock %}

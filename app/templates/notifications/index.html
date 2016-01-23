@@ -1,0 +1,135 @@
+{% extends base %}
+{% load i18n %}
+{% load voting_tags_extended %}
+{% load get_notification_objs %}
+{% load humanize %}
+{% block title %}LionsMatter | Notifications{% endblock %}
+{% load staticfiles %}
+{% block extra_head %}
+	<link rel="stylesheet" href="{% static "css/notifications.css" %}">
+{% endblock %}
+{% block content %}
+	 <div class="container top">
+     	<div class="row-fluid">
+            <h1>Notifications</h1>
+            {% if notification_count_total > 0 %}
+                {% for notification in notification_queue %}
+                    {% if notification.obj.notification_type == "status" %}
+                        <table class="table table-hover">
+                    	    <thead><h4>Post Update</h4></thead>
+                            <tbody>
+                  	            <tr{% if not notification.obj.notified %} class="notification-unread"{% endif %}>
+                                    <td>
+                                        <div class="row-fluid">
+                                            <div class="col-sm-12">
+                                                <h4 style="cursor:pointer; margin-bottom: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" onclick="$('#status-notification-{{ forloop.counter }}').collapse('toggle')">
+                                                    <span class="pull-left">{{ notification.obj.content }}</span>
+                                            	    <span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="row-fluid">
+                                     	    <div id="status-notification-{{ forloop.counter }}" class="collapse">
+                                        	    <div class="col-sm-12">
+                                            	    <h5>
+                                                	    <a style="margin: 0px 15px" href="{% url 'post' post_id=notification.obj.post.id %}">View</a>
+                                                        <a class="marknotification" href="#" style="margin: 0px 15px" onclick="markN('{{ notification.notification_ids }}');">Mark as read</a>
+                                                        <a class="deletenotification" style="margin: 0px 15px" href="#" onclick="deleteN('{{ notification.notification_ids }}');">Delete</a>
+                                                    </h5>
+                                                    <hr style="margin-top: 9px"/>
+                                           	    </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                       	    </tbody>
+                  	    </table>
+                    {% elif notification.obj.notification_type == 'comment' %}
+                        <table class="table table-hover">
+            	            <thead><h4>Comments</h4></thead>
+                            <tbody>
+                  	            <tr{% if not notification.obj.notified %} class="notification-unread"{% endif %}>
+                                    <td>
+                                        <div class="row-fluid">
+                                            <div class="col-sm-12">
+                                                <h4 style="cursor: pointer; margin-bottom: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" onclick="$('#unreadcomment-notification-{{ forloop.counter }}').collapse('toggle')">
+                                                    <span class="pull-left">{{ notification.title }}</span>
+                                            	    <span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                                          	    </h4>
+                                            </div>
+                                        </div>
+                                        <div class="row-fluid">
+                                     	    <div id="unreadcomment-notification-{{ forloop.counter }}" class="collapse">
+                                        	    <div class="col-sm-12">
+                                            	    <h5>
+                                                	    <a href="{% url 'post' post_id=notification.obj.post.id %}" style="margin: 0px 15px">View</a>
+                                                        <a class="marknotification" href="#" style="margin: 0px 15px" onclick="markN('{{ notification.notification_ids }}');">Mark as read</a>
+                                                	    <a class="deletenotification" href="#" style="margin: 0px 15px" onclick="deleteN('{{ notification.notification_ids }}');">Delete</a>
+                                                    </h5>
+                                                    <hr style="margin-top: 9px"/>
+                                           	    </div>
+                                                <div class="col-sm-12">
+                                                    {% for item in notification.notification_ids|notification_objs %}
+                                                        {% if item.notification_type == 'comment' %}
+                                                            {% if forloop.counter > 1 and forloop.revcounter > 1  %}<hr/>{% endif %}
+                                                            {% if forloop.revcounter == 1 and forloop.counter > 1 %}<hr/>{% endif %}
+                                                            <strong>{{ item.actor }} said: <span class="text-muted pull-right">{{ item.timestamp|naturaltime }}</span></strong><br/>
+                                                            {{ item.content }}
+                                                        {% endif %}
+                                                    {% endfor %}
+											    </div>
+                                            </div>
+                                        </div>
+                              	    </td>
+                                </tr>
+                       	    </tbody>
+                  	    </table>
+                    {% elif notification.obj.notification_type == 'vote' %}
+                        <table class="table table-hover">
+                    	    <thead><h4>Votes</h4></thead>
+                            <tbody>
+                  	            <tr{% if not notification.obj.notified %} class="notification-unread"{% endif %}>
+                                    <td>
+                                        <div class="row-fluid">
+                            	            <div class="col-sm-12">
+                                	            <h4 style="cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" onclick="$('#unreadvote-notification-{{ forloop.counter }}').collapse('toggle')">
+                                        	    <span class="pull-left">{{ notification.content }}</span>
+                                        	    <span class="pull-right glyphicon glyphicon-chevron-down"></span>
+                                    	    </h4>
+                                        </div>
+                                    </div>
+                                    <div class="row-fluid">
+                                	    <div id="unreadvote-notification-{{ forloop.counter }}" class="collapse">
+                                            <div class="col-sm-12">
+                                        	    <h5>
+                                            	    <a style="margin: 0px 15px" href="{% url 'post' post_id=notification.obj.post.id %}">View</a>
+                                         		    <a class="marknotification" style="margin: 0px 15px" href="#" onclick="markN('{{ notification.notification_ids }}');">Mark as read</a>
+                                                    <a class="deletenotification" style="margin: 0px 15px" href='#' onclick="deleteN('{{ notification.notification_ids }}');">Delete</a>
+                                                </h5>
+                                                <hr style="margin-top: 9px"/>
+                                            </div>
+                                    	    <div class="col-sm-12">
+                                    		    <h5>
+                                            	    Your post has a rating of {% get_percent notification.obj.post_id %}%
+                                                    <span class="pull-right">{% get_upvotes notification.obj.post.id %} <span class="glyphicon glyphicon-arrow-up"></span> {% get_downvotes notification.obj.post.id %} <span class="glyphicon glyphicon-arrow-down"></span></span>
+                                    		    </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                {% endif %}
+            {% endfor %}
+            {% else %}
+            	<h5>You don't have any notifications at this time.</h5>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+		//Remove '#'s from the URL 
+		$('a.deletenotification').click(function(event){event.preventDefault();});
+		$('a.marknotification').click(function(event){event.preventDefault();});
+	</script>
+{% endblock %}            

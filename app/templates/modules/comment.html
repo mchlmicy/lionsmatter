@@ -1,0 +1,46 @@
+{% load humanize %}
+{% load comments %}
+{% load post_tags %}
+{% load staticfiles %}
+{% load voting_tags %}
+{% load voting_tags_extended %}
+{% load i18n %}
+{% load timestamping %}
+{% load subdomainurls %}
+{% block content %}
+    <div class="comment">
+        <div class="comment-header">
+            {% if comment.user_name != 'anonymous' %}
+                {% if comment.user.get_profile.department %}
+                    <script>var departmentModalJSON_comment{{ comment.id }} = '{"fullname": "{{ comment.user.get_profile.full_name }}", "profile": "{% url "userprofile" username=comment.user.username subdomain=None %}", "position": "{{ comment.user.get_profile.staff_position }}", "department": "{{ comment.user.get_profile.department }}", "bio": "{{ comment.user.get_profile.bio }}", "address": "{{ comment.user.get_profile.department.address }}", "email": "{{ comment.user.get_profile.department.email }}", "phone": "{{ comment.user.get_profile.department.phone }}"}';</script>
+                    <a href="#" style="font-weight: bold; margin-right: 9px" class="modal-custom" onclick="modalCustom('department-badge', departmentModalJSON_comment{{ comment.id }})">{{ comment.user.get_profile.full_name }}</a>
+                    <span class="label label-default">{{ comment.user.get_profile.department }}</span>
+                {% else %}
+                    <a href="{% url 'userprofile' username=comment.user subdomain=None %}" class="link-nounderline" style="font-weight: bold">{{ comment.user_name }}</a>
+                {% endif %}
+            {% else %}
+                <span class="text-muted" style="font-weight: bold">anonymous</span>
+            {% endif %}
+            <span class="text-muted pull-right"><a class="link-muted alt-time" onclick="showAltTimestamp($(this))"  href="#" data-alttime="{{ comment.submit_date|simplifyTimestamp }}" title="{{ comment.submit_date|simplifyTimestamp }}">{{ comment.submit_date|toNaturalTime }}</a>{% if user.is_authenticated and user.id == comment.user_id %}<a href="#" class="close delete-comment" data-id="{{comment.id}}" style="line-height: .6; margin-left: 6px">&times;</a>{% endif %}</span>
+        </div>
+        <div class="comment-content" style="margin-bottom: 0px; margin-top: 3px">{{ comment.comment|linebreaks }}</div>
+        <div class="comment-footer">
+            {% vote_by_user user on comment as comment_vote %}{% score_for_object comment as total_likes %}
+            {% if comment.user.get_profile.department %}
+                <div class="department-response-rating">
+                    <span class="rating-input" data-voted="{% if comment_vote %}{% if comment_vote.vote == 1 %}up{% elif comment_vote.vote == -1 %}down{% endif %}{% else %}none{% endif %}">
+                        {% if comment_vote %}
+                            <a href="#" class="post-option" onclick="postOption('vote-department', {{ comment.id }}, $(this))" data-votedir="clear">Undo:</a> You found this {% if comment_vote.vote == -1 %}un{% endif %}helpful.
+                        {% else %}
+                            Was this helpful? <a href="#" data-votedir="up" class="post-option" onclick="postOption('vote-department', {{ comment.id }}, $(this))">Yes</a> / <a href="#" data-votedir="down" class="post-option" onclick="postOption('vote-department', {{ comment.id }}, $(this))">No</a>
+                        {% endif %}
+                    </span><br/>
+                    <span class="rating-display"><strong><span class="rating-helpful">{% get_comment_upvotes comment.id %}</span> of <span class="rating-total">{{ comment.id|get_comment_total_votes }}</span></strong> <span class='glyphicon glyphicon-user'></span> students found this helpful.</span>
+                </div>
+            {% else %}
+                <a href="#" class="post-option" data-liked="{% if comment_vote %}true{% else %}false{% endif %}" onclick="postOption('like-comment', {{ comment.id }}, $(this))">{% if comment_vote %}Undo:{% else %}Agree:{% endif %}</a> <span class="helper-text" style="display: {% if comment_vote %}inline-block{% else %}none{% endif %}">You and</span> <strong>{% if comment_vote %}{{ total_likes.score|add:"-1" }}{% else %}{{ total_likes.score }}{% endif %}</strong> <span class="glyphicon glyphicon-user"></span> others agree.
+            {% endif %}
+        </div>
+    </div>
+    <script type="text/javascript">listen_deleteComment(), listen_modalCustom(), listen_postActions();</script>
+{% endblock %}

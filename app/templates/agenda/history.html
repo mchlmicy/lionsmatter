@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags %}
+{% load voting_tags_extended %}
+{% load post_tags %}
+{% load staticfiles %}
+{% load get_comment_link %}
+{% load i18n %}
+{% load get_username %}
+{% load get_category %}
+{% load social_tags %}
+{% block extra_head %}
+	<script>$(document).attr('title', 'LionsMatter | History');</script>
+	<link rel="stylesheet" href="{% static "css/agenda-datepicker.css" %}">
+    <link rel="stylesheet" href="{% static "css/feed-history.css" %}">
+    <link rel="stylesheet" href="{% static "css/feed-responses.css" %}">
+{% endblock %}
+{% block content %}
+	<div class="container top">
+    	<div class="row-fluid">
+    		<div class="col-sm-4">
+                <desktoptablet>
+                    <div class="panel-group row-fluid" id="menu-desktop" style="margin-bottom: 15px">
+                	    <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <span class="accordion-toggle">
+                                        {% if feed %}{{ feed.title }}{% elif alt_feed %}{{ alt_feed }}{% else %}Feed{% endif %}
+                                    </span>
+                                </h4>
+                            </div>
+                            <div class="feed-list panel-body">
+                                <h6>Agenda <span class='glyphicon glyphicon-question-sign' title="A rundown of posts that will be directed to administration." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="{% url 'agenda' %}">Agenda</a></div>
+                                <div class="title" style="margin-bottom: 15px"><a href="{% url 'agenda_history' %}">History</a></div>
+                                <div class="alert alert-warning" style="border-left: none; border-right: none; border-radius: 0px; margin: 20px -15px 20px -15px">
+                                    <h6>{% trans "Feeds" %}<span class="label label-warning pull-right">{% trans "Updated" %}</span></h6>
+                                    {% for category in categories %}
+                                        <div class="title"><a href="{% url 'feed' feed=category.shortname %}" class="link-colorinherit">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                </div>
+                                <h6>Responses <span class='glyphicon glyphicon-question-sign' title="Responses are comments TCNJ departments or organizations make on user posts." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="/responses/">Responses</a></div>
+                                <hr/>
+                                {% if special_categories %}
+                                    <h6>{% trans "Topics" %} <span class='glyphicon glyphicon-question-sign' title="Topics are submitted by TCNJ departments or organizations." data-toggle="tooltip"></span></h6>
+                                    <script>$('[data-toggle="tooltip"]').tooltip({'show':true, 'placement':'right'});</script>
+                                    {% for category in special_categories %}
+                                        <div class="title"><a href="{% url 'special-feed' feed=category.shortname %}">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </desktoptablet>
+            </div>
+		   	<div id="agenda-feed" class="col-sm-8">
+                <mobile>
+                    <div class="panel panel-default" id="menu" style="margin-bottom: 12px">
+                        <div class="panel-heading" data-toggle="collapse" data-parent="#menu" href="#feeds" style="border-color: transparent; cursor: pointer">
+                            <h4 class="panel-title">
+                                <span class="accordion-toggle">
+                                    {% if feed %}{{ feed.title }}{% elif alt_feed %}{{ alt_feed }}{% else %}Feed{% endif %}
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="feeds" class="panel-collapse collapse">
+                            <div class="feed-list panel-body">
+                                <h6>Agenda <span class='glyphicon glyphicon-question-sign' title="A rundown of posts that will be directed to administration." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="{% url 'agenda' %}">Agenda</a></div>
+                                <div class="title"><a href="{% url 'agenda_history' %}">History</a></div>
+                                <div class="alert alert-warning" style="border-left: none; border-right: none; border-radius: 0px; margin: 20px -15px 20px -15px">
+                                    <h6>{% trans "Feeds" %}<span class="label label-warning pull-right">{% trans "Updated" %}</span></h6>
+                                    {% for category in categories %}
+                                        <div class="title"><a href="{% url 'feed' feed=category.shortname %}" class="link-colorinherit">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                </div>
+                                <h6>Responses <span class='glyphicon glyphicon-question-sign' title="Responses are comments TCNJ departments or organizations make on user posts." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="/responses/">Responses</a></div>
+                                <hr/>
+                                {% if special_categories %}
+                                    <h6>{% trans "Topics" %} <span class='glyphicon glyphicon-question-sign' title="Topics are submitted by TCNJ departments or organizations." data-toggle="tooltip"></span></h6>
+                                    <script>$('[data-toggle="tooltip"]').tooltip({'show':true, 'placement':'right'});</script>
+                                    {% for category in special_categories %}
+                                        <div class="title"><a href="{% url 'special-feed' feed=category.shortname %}">{{ category.title }}</a></div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </mobile>
+            	<div class="scroller_anchor"></div>
+                <div class="panel-group datepicker-container row-fluid">
+                	<div class="panel-pre"></div>
+                    <div id="datepicker-panel" class="panel panel-default">
+                    	<div class="panel-heading collapsed" data-toggle="collapse" data-parent="#datepicker-panel" href="#date-picker">
+                            <h3 class="panel-title datepicker-panel-header"><a id="datepicker-label" data-date="{{ latest_item.timestamp|date:"m-d-y" }}">{{ latest_item.timestamp|date:"l, F j" }}</a><span class="pull-right glyphicon glyphicon-calendar"></span></h3>
+                        </div>    
+                        <div id="date-picker" class="collapse">
+                        	<div class="datepicker-header row-fluid">
+                               	<strong><center id="datepicker-monthlabel">{{ latest_item.timestamp|date:"F" }}</center></strong>
+                            </div>
+                            <center>
+                            	<div class="datepicker-calendar row-fluid">
+                                   	<span class="datepicker-next" data-nextwk="{{ next_sunday|date:"m-d-Y" }}">
+                                        <span class="glyphicon glyphicon-chevron-right"></span>
+                                    </span>
+                                    {% for date in current_week reversed %}
+                                    <span class="datepicker-day">
+                                        <a href="#{{ date|date:"m-d-Y" }}">
+                                     		<center>
+                                           		<div class="datepicker-day-dotw"><strong><mobile>{{ date|date:"D"|slice:':1' }}</mobile><desktoptablet>{{ date|date:'D' }}</desktoptablet></strong></div>
+                                             	<div class="datepicker-day-body">{{ date|date:"j" }}</div>
+                                       		</center>
+                                   		</a>
+                                   	</span>
+                                    {% endfor %}
+                                    <span class="datepicker-previous" data-previouswk="{{ prev_sunday|date:"m-d-Y" }}">
+                                        <span class="glyphicon glyphicon-chevron-left"></span>
+                                    </span>
+                                </div>
+                           	</center>
+                        </div>
+             		</div>	
+               	</div>
+            	<div id='recent_posts'>
+               		<div id="history_feed">
+                    {% regroup all_history_items by date as all_history_items_sorted %}
+                    {% for history_items in all_history_items_sorted reversed %}
+                        {% if forloop.first %}
+                            <div class="history-date"><a id="{{ history_items.grouper|date:"m-d-Y" }}" data-date="{{ history_items.grouper|date:"l, F j" }}"></a></div>
+                        {% else %}
+                            <div class="well history-date"><a id="{{ history_items.grouper|date:"m-d-Y" }}" data-date="{{ history_items.grouper|date:"l, F j" }}"><h4>{{ history_items.grouper|date:"l, F j" }}</h4></a></div>
+                        {% endif %}
+                        {% for item in history_items.list %}
+                            {% if item.status_code.id == 2 %}
+                                <div class="row-fluid well history-item" onclick="location.href='{% url 'post' item.post_id %}';">
+                                    <div class="history-badge">
+                                        <div class="badge-container">
+                                            <span class="glyphicon glyphicon-star"></span>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <blockquote>
+                                            <p>New post nominated by SG</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            {% elif item.status_code.id == 3 %}
+                                <div class="row-fluid well history-item" onclick="location.href='{% url 'post' item.post_id %}';">
+                                    <div class="history-badge">
+                                        <div class="badge-container">
+                                            <span class="glyphicon glyphicon-share-alt"></span>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <blockquote>
+                                            <p>Post sent out</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            {% elif item.status_code.id == 4 %}
+                                <div class="row-fluid well history-item" onclick="location.href='{% get_comment_link item.post_id item.status_recipient_user_id %}';">
+                                    <div class="history-badge">
+                                        <div class="badge-container">
+                                            <span class="glyphicon glyphicon-comment"></span>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <blockquote>
+                                            <p>Response to post received</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            {% elif item.status_code.id == 7 %}
+                                <div class="row-fluid well history-item" onclick="location.href='{% url 'post' item.post_id %}';">
+                                    <div class="history-badge">
+                                        <div class="badge-container">
+                                            <span class="glyphicon glyphicon-star"></span>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <blockquote>
+                                            <p>New post went gold</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    </div>
+            	</div>
+    		</div>
+      	</div>
+   	</div>
+    <script src="{% static "js/agenda-datepicker.js"%}"></script>
+	<script src="{% static "js/feed-menu-collapse.js"%}"></script>
+{% endblock %}

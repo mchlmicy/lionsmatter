@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	{% load staticfiles %}
+        
+    	<!--Third party css files.-->
+    	<link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    </head>
+    <body>
+        <div class="row-fluid">
+            Hey {% if user.get_full_name %}{{user.get_full_name}}{% else %}{{ user.username }}{% endif %},<br/><br/>
+            {% if status.status_code_id == '3' %}
+            We've forwarded your post to {{ status.status_recipient_dept }}.  We'll let you know as soon as we get a response.<br/>
+            {% elif status.status_code_id == '6' %}
+            We regret to inform you that your post has been flagged for the following reason:<br/>
+            <blockquote>
+            	<p>{{ status.flag }}</p>
+            </blockquote><br/>
+            If you would like to revise your post, or challenge the decision, please respond to this email.<br/>
+            {% endif %}
+            - The LionsMatter Team
+            </div>    
+		</div>
+	</body>
+</html>

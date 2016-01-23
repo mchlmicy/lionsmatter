@@ -1,0 +1,259 @@
+{% extends base %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags_extended %}
+{% load voting_tags %}
+{% load post_tags %}
+{% load staticfiles %}
+{% load i18n %}
+{% load get_username %}
+{% load get_category %}
+{% load social_tags %}
+{% load timestamping %}
+{% load subdomainurls %}
+{% block title %}LionsMatter | Post by {{ post.user_displayname }}{% endblock %}
+{% block extra_head %}
+	<!-- for Facebook --> 
+	<meta property="og:title" content="[{{ post.category.title }}] {{ post.user_displayname }} wrote:" />
+	<meta property="og:type" content="article" />
+	{% if post.image %}
+	<meta property="og:image" content="{{ post.image_large.url }}" />
+	{% endif %}
+	<meta property="og:url" content="http://lionsmatter.com/post/{{ post.pk }}/" />
+	<meta property="og:description" content="{{ post.post }}" />
+	<!-- for Twitter --> 
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:domain" content="lionsmatter.com">  
+	<meta name="twitter:site" content="@lionsmatter">
+	<meta name="twitter:description" content="{{ post.post }}">
+	<meta name="twitter:title" content="[{{ post.category.title }}] {{ post.user_displayname }} wrote:">
+	{% if post.image %}
+	<meta name="twitter:image" content="{{ post.image_large.url }}">
+	{% endif %}
+    
+    <link rel="stylesheet" href="{% static "css/post.css" %}">
+{% endblock %}
+{% block content %}
+	<div class="container top">
+    	<div class="row-fluid">
+		   	<div class="col-sm-8">
+            	<div class="row-fluid">
+                	<h3 class="post-title">
+                    	<span class="username">{{ post.user_displayname }}</span>
+                        <span class="timestamp text-muted pull-right">{{ post.timestamp|toNaturalTime }}</span>
+                   	</h3>
+                    <div class="post-content lead">
+                    	{{ post.post | dynamic_content }}
+                   		<mobile>
+                            <div class="text-muted post-description_mobile">Posted on {{ post.timestamp|simplifyTimestamp }} &mdash; <a href="{% url 'feed' feed=post.category.shortname subdomain=None %}">{{ post.category.title }}</a></div>
+                            <div class="text-muted post-options_mobile" style="margin-bottom: 6px">
+                            	{% if post.image %}
+                                	<a class="link-muted" style="font-weight: 500" href="{{ post.image_large.url }}">Photo</a> &bull;
+                                {% elif post.vine %}
+                                    <script>var vineModalJSON_display{{ post.id }} = '{"display_name": "{{ post.user_displayname }}", "profile": "{% if post.user_displayname != 'anonymous' %}{% url 'userprofile' username=post.user.username subdomain=None %}{% endif %}", "timestamp": "{{ post.timestamp|naturaltime }}", "timestamp-alt": "{{ post.timestamp|simplifyTimestamp }}", "vine_url": "{{ post.vine }}"}';</script>
+                                    <a href="#" class="link-muted modal-custom" style="font-weight: 500" onclick="modalCustom('vine-popup_display', vineModalJSON_display{{ post.id }})">Vine</a> &bull;
+                                {% endif %} 
+                            	<a class="link-muted modal-custom" style="font-weight: 500" href="#" onclick="modalCustom('share-popup', shareModalJSON)">Share</a>
+                           		{% if user.is_authenticated and user.id == post.user_id %}&bull; <a href="#" class="link-muted delete-post" style="font-weight: 500" data-id="{{ post.id }}">{% trans "Delete" %}</a>{% endif %}
+                           	</div>
+                        </mobile>
+                    </div>
+                   	<mobile>
+                        <div class="btn-group btn-group-justified" style="margin-bottom: 9px">
+                            <a href="#" id="postVoteUpM" onclick="event.preventDefault(); postVote('{{ post.id }}', 'up');" class="btn btn-default"><span id="postVoteUpTotalM">{% get_upvotes post.id %}</span> <span class="glyphicon glyphicon-arrow-up"></span></a>
+                            <a href="#" id="postVoteDownM" onclick="event.preventDefault(); postVote('{{ post.id }}', 'down');" class="btn btn-default"><span id="postVoteDownTotalM">{% get_downvotes post.id %}</span> <span class="glyphicon glyphicon-arrow-down"</span></a>
+                        </div>
+                    </mobile>
+                    <div class="btn-group btn-group-justified">
+                    	<a href="#" class="btn btn-default active post-option-tab" style="border-bottom-left-radius: 0px" onclick="postOptionTab($(this), 'comments', $(this).parent())">Comments</a>
+                        <a href="#" class="btn btn-default post-option-tab" onclick="postOptionTab($(this), 'history', $(this).parent())">History</a>
+                        <a href="#" class="btn btn-default post-option-tab" style="border-bottom-right-radius: 0px" onclick="postOptionTab($(this), 'metrics', $(this).parent())">Metrics</a>
+                   	</div>
+                    <div class="well" id="post-panel">
+                        <div class="panel" data-panel="comments"  style="display: inherit; margin-bottom: 0px">
+                            {% if user.is_authenticated and user.is_active %}
+                                {% if user.is_college_staff and post.status.status_recipient_response_obj == user %}
+                                    {% get_comment_form for post as form %}
+                                    <div id="comment_on_{{ post.id }}">
+                                        <form action="{% comment_form_target %}" method="POST" style="border-bottom: 1px solid #e3e3e3; margin: -1px; margin-bottom: 0px" onsubmit="event.preventDefault(); commentPost('{{ post.id }}');">
+                                            {% csrf_token %}
+                                            {{ form.content_type }}
+                                            {{ form.object_pk }}
+                                            {{ form.timestamp }}
+                                            {{ form.security_hash }}
+                                            {% render_field form.name|prepend_attr:'id:comment-privacy-' id=post.id value=settings.display_name type='hidden' %}
+                                            {% render_field form.is_sg_response|prepend_attr:'id:comment-sg-' id=post.id type='hidden' %}
+                                            {% render_field form.comment|attr:"rows:3" type="text" class="form-control" id="id_comment" placeholder="Respond to this post" style="border-radius: 0px; resize: vertical; margin-bottom: 0px; border-left: none; border-right: none" %}
+                                        </form>
+                                    </div>
+                                {% elif user.is_college_staff %}
+                                	<div class="alert alert-info" style="margin-bottom: 0px; border-radius: 0px; margin: -4.5px; margin-bottom: 0px; border-left: none; border-right: none">
+                                    	<b>{% trans "Note" %}:</b> {% trans "You must be" %} <a class="link-colorinherit" href="#signin_modal" data-toggle="modal"><strong>{% trans "signed in"%}</strong></a> {% trans "to comment." %}
+                                    </div>
+                                {% else %}
+                                    {% get_comment_form for post as form %}
+                                    <div id="comment_on_{{ post.id }}">
+                                        <form action="{% comment_form_target %}" method="POST" style="border-bottom: 1px solid #e3e3e3; margin: -1px; margin-bottom: 0px" onsubmit="event.preventDefault(); commentPost('{{ post.id }}');">
+                                            {% csrf_token %}
+                                            {{ form.content_type }}
+                                            {{ form.object_pk }}
+                                            {{ form.timestamp }}
+                                            {{ form.security_hash }}
+                                            {% render_field form.name|prepend_attr:'id:comment-privacy-' id=post.id value=settings.display_name type='hidden' %}
+                                            {% render_field form.is_sg_response|prepend_attr:'id:comment-sg-' id=post.id type='hidden' %}
+                                            {% render_field form.comment|attr:"rows:3" type="text" class="form-control" id="id_comment" placeholder="Comment on this post" style="border-radius: 0px; resize: vertical; margin-bottom: 0px; border-left: none; border-right: none" %}
+                                            <div class="buttonpanel" style="height: 32px; background-color: #e3e3e3">
+                                                <div class="btn-group pull-right" style="margin-top: -1px">
+                                                    <div class="btn-group">
+                                                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+                                                            <span class="glyphicon glyphicon-user"></span> <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu pull-right">
+                                                            <li class="dropdown-header">{% trans "Post as" %}</li>
+                                                            <li><a href="#" onclick="event.preventDefault()" id="commentAs">{{ settings.display_name }}</a></li>
+                                                            <hr/>
+                                                            <li class="dropdown-header">{% trans "Options" %}</li>
+                                                            {% if settings.full_name %}
+                                                               <li><a href="#" onclick="event.preventDefault(); $('#commentAs').text('{{ settings.full_name }}'); $('#comment-privacy-{{ post.id }}').val('{{ settings.full_name }}')">{{ settings.full_name }}</a></li>
+                                                            {% endif %}
+                                                            <li><a href="#" onclick="event.preventDefault(); $('#commentAs').text('{{ user.username }}'); $('#comment-privacy-{{ post.id }}').val('{{ user.username }}')">{{ user.username }}</a></li>
+                                                            <li><a href="#" onclick="event.preventDefault(); $('#commentAs').text('anonymous'); $('#comment-privacy-{{ post.id }}').val('anonymous')">{% trans "anonymous" %}</a></li>
+                                                        </ul>
+                                                        <input id="submit" class="btn btn-primary" style="height: 34px" type="submit" value="Submit"></input>
+                                                   </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                            	<div class="alert alert-info" style="margin-bottom: 0px; border-radius: 0px; margin: -4.5px; margin-bottom: 0px; border-left: none; border-right: none">
+                                	<b>{% trans "Note" %}:</b> {% trans "You must be" %} <a class="link-colorinherit" href="#signin_modal" data-toggle="modal"><strong>{% trans "signed in"%}</strong></a> {% trans "to comment." %}
+                                </div>
+                            {% endif %}
+                            {% get_comment_list for post as comment_list %}
+                            {% if comment_list %}
+                                <div id="comments-{{ post.id }}" class="comments">
+                                    {% for comment in comment_list %}
+                                        <div class="comment {% if comment.pk == selected_comment.pk %}active{% endif %}">
+                                            <div class="comment-header">
+                                                {% if comment.user_name != 'anonymous' %}
+                                            	    {% if comment.user.get_profile.department %}
+                                               		    <script>var departmentModalJSON_comment{{ comment.id }} = '{"fullname": "{{ comment.user.get_profile.full_name }}", "profile": "{% url "userprofile" username=comment.user.username subdomain=None %}", "position": "{{ comment.user.get_profile.staff_position }}", "department": "{{ comment.user.get_profile.department }}", "bio": "{{ comment.user.get_profile.bio }}", "address": "{{ comment.user.get_profile.department.address }}", "email": "{{ comment.user.get_profile.department.email }}", "phone": "{{ comment.user.get_profile.department.phone }}"}';</script>
+                                                        <a href="#" style="margin-right: 9px" class="modal-custom" onclick="modalCustom('department-badge', departmentModalJSON_comment{{ comment.id }})">{{ comment.user.get_profile.full_name }}</a>
+                                                	    <span class="label label-default">{{ comment.user.get_profile.department }}</span>
+                                            	    {% else %}
+                                                 	    <a href="{% url 'userprofile' username=comment.user subdomain=None %}" class="link-nounderline">{{ comment.user_name }}</a>
+                                               	    {% endif %}
+                                                {% else %}
+                                                    <span class="text-muted">anonymous</span>
+                                                {% endif %}
+                                                <span class="text-muted pull-right"><a class="link-muted alt-time" onclick="showAltTimestamp($(this))" href="#" data-alttime="{{ comment.submit_date|simplifyTimestamp }}" title="{{ comment.submit_date|simplifyTimestamp }}">{{ comment.submit_date|toNaturalTime }}</a>{% if user.is_authenticated and user.id == comment.user_id %}<a href="#" class="close delete-comment" data-id="{{comment.id}}" style="line-height: .6; margin-left: 9px">&times;</a>{% endif %}</span>
+                                            </div>
+                                            <div class="comment-content">{{ comment.comment|linebreaks }}</div>
+                                            <div class="comment-footer">
+                                                {% vote_by_user user on comment as comment_vote %}{% score_for_object comment as total_likes %}
+                                                {% if comment.user.get_profile.department %}
+                                                    <div class="department-response-rating">
+                                                        <span class="rating-input" data-voted="{% if comment_vote %}{% if comment_vote.vote == 1 %}up{% elif comment_vote.vote == -1 %}down{% endif %}{% else %}none{% endif %}">
+                                                            {% if comment_vote %}
+                                                                <a href="#" class="post-option" onclick="postOption('vote-department', {{ comment.id }}, $(this))" data-votedir="clear">Undo:</a> You found this {% if comment_vote.vote == -1 %}un{% endif %}helpful.
+                                                            {% else %}
+                                                                Was this helpful? <a href="#" class="post-option" data-votedir="up" onclick="postOption('vote-department', {{ comment.id }}, $(this))">Yes</a> / <a href="#" class="post-option" data-votedir="down" onclick="postOption('vote-department', {{ comment.id }}, $(this))">No</a>
+                                                            {% endif %}
+                                                        </span><br/>
+                                                        <span class="rating-display"><strong><span class="rating-helpful">{% get_comment_upvotes comment.id %}</span> of <span class="rating-total">{{ comment.id|get_comment_total_votes }}</span></strong> <span class='glyphicon glyphicon-user'></span> students found this helpful.</span>
+                                                    </div>
+                                                {% else %}
+                                                    <a href="#" class="post-option" data-liked="{% if comment_vote %}true{% else %}false{% endif %}" onclick="postOption('like-comment', {{ comment.id }}, $(this))">{% if comment_vote %}Undo:{% else %}Agree:{% endif %}</a> <span class="helper-text" style="display: {% if comment_vote %}inline-block{% else %}none{% endif %}">You and</span> <strong>{% if comment_vote %}{{ total_likes.score|add:"-1" }}{% else %}{{ total_likes.score }}{% endif %}</strong> <span class="glyphicon glyphicon-user"></span> others agree.
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                             	</div>
+                             {% else %}
+                              	<div id="comments-{{ post.id }}" class="comments">
+                                	<div class="comment" style="text-align: center">
+                                        <strong style="line-height: 3">No comments at this time.</strong>
+                                    </div>
+                               	</div>
+                        	{% endif %}
+                        </div>
+                        <div class="panel" data-panel="history"  style="display: none; margin-bottom: 0px">
+                            <div class="comments">
+                                {% for item in history %}
+                                    {% if item.status_code.id != 5 %}
+                                    <div class="comment">
+                                        <div class="comment-header">
+                                            {% if item.status_code_id == 4 %}
+                                                <script>var departmentModalJSON_history{{ item.id }} = '{"fullname": "{{ item.status_recipient_user.get_profile.full_name }}", "profile": "{% url "userprofile" username=item.status_recipient_user.username subdomain=None %}", "position": "{{ item.status_recipient_user.get_profile.staff_position }}", "department": "{{ item.status_recipient_user.get_profile.department }}", "bio": "{{ item.status_recipient_user.get_profile.bio }}", "address": "{{ item.status_recipient_user.get_profile.department.address }}", "email": "{{ item.status_recipient_user.get_profile.department.email }}", "phone": "{{ item.status_recipient_user.get_profile.department.phone }}"}';</script>
+                                                <a href="#" style="margin-right: 9px" class="modal-custom" onclick="modalCustom('department-badge', departmentModalJSON_history{{ item.id }})">{{ item.status_recipient_user.get_profile.full_name }}</a>
+                                                <span class="label label-default">{{ item.status_recipient_user.get_profile.department }}</span>
+                                            {% else %}
+                                                <span class="text-muted">LionsMatter</span>
+                                            {% endif %}
+                                            <span class="text-muted pull-right"><a class="link-muted" href="#" onclick="showAltTimestamp($(this))" data-alttime="{{ item.timestamp|simplifyTimestamp }}" title="{{ item.timestamp|simplifyTimestamp }}">{{ item.timestamp|toNaturalTime }}</a></span>
+                                        </div>
+                                        <div class="comment-content">{% if item.status_code_id <= 3 %}<strong>Post {{ item.status_code.code }}</strong>{% if item.status_code.id == 3 %} to {{ item.status_recipient_dept.name }}{% endif %}{% endif %}{% if item.status_code.id == 4 and item.status_recipient_response %}{{ item.status_recipient_response }}{% endif %}{% if item.status_code.id == 6 and item.flag %}{{ item.flag }}{% endif %}{% if item.status_code_id == 7 %}<strong>Post Nominated</strong> - this post has been nominated by the LionsMatter community to be forwarded immediately.{% endif %}</div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="panel" data-panel="metrics"  style="display: none; margin-bottom: 0px">
+                           	<div class="comments">
+                                <div class="comment" style="text-align: center">
+                                    <strong style="line-height: 3">Coming soon...</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+            	<div class="row-fluid">
+                    <desktoptablet>
+                        <div class="well postdescription-header_desktop {% if post.image or post.vine %}has-media{% endif %}">
+                            {% score_for_object post as score %}
+                            {% vote_by_user user on post as vote %}
+                            <center><h1 id="postVotePercent" style="font-size: 72px; margin-top: 0px">{% get_percent post.id %}%</h1></center>
+                            <div class="btn-group btn-group-justified">
+                                <a href="#" id="postVoteUp" onclick="postVote('{{ post.id }}', 'up');" class="btn btn-default {% if vote.vote == 1 %}active{% endif %}"><span id="postVoteUpTotal">{% get_upvotes post.id %}</span> <span class="glyphicon glyphicon-arrow-up"></span></a>
+                                <a href="#" id="postVoteDown" onclick="postVote('{{ post.id }}', 'down');" class="btn btn-default {% if vote.vote == -1 %}active{% endif %}"><span id="postVoteDownTotal">{% get_downvotes post.id %}</span> <span class="glyphicon glyphicon-arrow-down"></span></a>
+                            </div>
+                            {% if post.image or post.vine%}
+                        </div>
+                        {% if post.image %}
+                            <script>var photoModalJSON = '{"display_name": "{{ post.user_displayname }}", "profile": "{% if post.user_displayname != 'anonymous' %}{% url 'userprofile' username=post.user.username subdomain=None %}{% endif %}", "timestamp": "{{ post.timestamp|naturaltime }}", "timestamp-alt": "{{ post.timestamp|simplifyTimestamp }}", "photo_url": "{{ post.image_large.url }}"}'</script>
+                            <a href="#" class="thumbnail post-photo_desktop modal-custom" onclick="modalCustom('photo-popup', photoModalJSON)" title="View Photo">
+                                <img src="{{ post.image_large.url }}" style="width: 100%"/>
+                            </a>
+                        {% elif post.vine %}
+                            <div class="vine-container">
+                                <div class='load-message' style='position: absolute; text-align: center; width: 100%'><div class='message' style='color: #404040; font-weight: bold; margin-right: 40px'>Loading Vine...</div></div>
+                                <iframe class="vine-embed" src="" style="background-color: #e3e3e3; border: 1px solid #c0c0c0" width="100%" height="300px" frameborder="0"></iframe><script async src="//platform.vine.co/static/scripts/embed.js" charset="utf-8"></script>
+                            </div>
+                            <script>
+                                $('.vine-container iframe.vine-embed').load(function(){if($(this).attr('src').length>0){clearTimeout(post_vineLoadERROR); $('.vine-container .load-message').remove(); $('.vine-container iframe.vine-embed').css('background-color', '#000000');}});
+
+                                if($(window).width()<=767){$(window).on('resize.load_vine_later', function(){if($(window).width()>767){$(window).off('resize.load_vine_later'); post_vineLoadERROR = setTimeout(function(){var vine_url = '{{ post.vine }}'; $('.vine-container').remove(); $('.postdescription-footer').css('top', '-18px'); $('.postdescription-footer p:nth-child(2)').after('<p><strong style="margin-right: 6px">Media<desktop>:</desktop></strong><tablet style="line-height: 0"><br/></tablet><a href="'+vine_url+'">Vine</a></p>');},7500); $('.vine-container iframe.vine-embed').attr('src', '{{ post.vine }}/embed/simple');}});}
+                                else{post_vineLoadERROR = setTimeout(function(){var vine_url = '{{ post.vine }}'; $('.vine-container').remove(); $('.postdescription-footer').css('top', '-18px'); $('.postdescription-footer p:nth-child(2)').after('<p><strong style="margin-right: 6px">Media<desktop>:</desktop></strong><tablet style="line-height: 0"><br/></tablet><a href="'+vine_url+'">Vine</a></p>');},7500); $('.vine-container iframe.vine-embed').attr('src', '{{ post.vine }}/embed/simple');}
+                            </script>
+                        {% endif %}
+                        <div class="well postdescription-footer {% if post.image or post.vine %}has-media {% if post.vine %}has-vine {% endif %}{% endif %}">
+                            {% endif %}
+                                <p {% if not post.image and not post.vine %}style="margin-top: 20px"{% endif %}><strong style="margin-right: 6px">Posted on<desktop>:</desktop></strong><tablet style="line-height: 0"><br/></tablet>{{ post.timestamp|simplifyTimestamp }}</p>
+                                <p><strong style="margin-right: 6px">Posted under<desktop>:</desktop></strong><tablet style="line-height: 0"><br/></tablet><a href="{% url 'feed' feed=post.category.shortname subdomain=None %}">{{ post.category.title }}</a></p>
+                                <p><strong style="margin-right: 6px">Share<desktop>:</desktop></strong><tablet style="line-height: 0"><br/></tablet><a href="{% shareFacebookM post.id post.post %}" target="_blank">Facebook</a> &bull; <a href="{% shareTwitterM post.id post.category.title %}" target="_blank">Twitter</a></p>
+                                {% if user.is_authenticated and user.id == post.user_id %}<hr/><center><a href="#" class="delete-post" data-id="{{ post.id }}">{% trans "Delete this post" %}</a></center>{% endif %}
+                            </div>
+                        {% if post.image %}{% else %}</div>{% endif %}
+                    </desktoptablet>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>var shareModalJSON = '{"site-names": ["Facebook", "Twitter"], "site-links": ["{% shareFacebookM post.id post.post %}", "{% shareTwitterM post.id post.category.title %}"]}';</script>
+    <script src="{% static "js/post-actions_post.js"%}"></script>
+{% endblock %}

@@ -1,0 +1,44 @@
+/* Exceptions for CSS files on Tail*/
+/* Navbar */
+.navbar .dropdown-menu>li
+{	font-size: inherit;
+	list-style-type: inherit;
+}
+.nav.nav-tabs>li
+{	font-size: inherit;
+}
+.nav.nav-tabs>li span
+{	border: 1px solid transparent;
+	color: #ffffff;
+	cursor: default;
+	display: block;
+	line-height: 1.428571429;
+	padding: 10px 15px;
+}
+.nav.navbar-nav>li
+{	background: inherit;
+	border: inherit;
+	border-color: inherit;
+	color: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	list-style-type: inherit;
+	padding: inherit;	
+}
+.navbar div.breadcrumbs
+{	background: inherit;
+	border: inherit;
+	color: #c0c0c0;
+	font-size: inherit;
+	height: 50px;
+	padding: 15px;
+}
+.navbar div.breadcrumbs a
+{	background: inherit;
+	color: #ffffff;
+}
+.navbar div.breadcrumbs a:hover,
+.navbar div.breadcrumbs a:focus
+{	color: #ffffff;
+}
+

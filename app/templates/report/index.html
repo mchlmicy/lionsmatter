@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% block title %}LionsMatter | Problem Report{% endblock %}
+{% block content %}
+	<div class="container top">
+        <div class="row-fluid">
+            <h1>Problem Report</h1>
+        </div>
+        <div class="row-fluid">
+        	<div class="col-sm-8 well" style="padding-bottom: 15px">
+            	{% if form.title.errors %}<div class="alert alert-warning"><strong>Error:</strong> {{ form.title.errors|striptags }}</div>{% endif %}
+                {% if form.description.errors %}<div class="alert alert-warning"><strong>Error:</strong> {{ form.description.errors|striptags }}</div>{% endif %}
+                {% if form.page.errors %}<div class="alert alert-warning"><strong>Error:</strong> {{ form.page.errors|striptags }}</div>{% endif %}
+                <form action="{% url 'report' %}" enctype="multipart/form-data" method="post" id="reportForm">
+                   	{% csrf_token %}
+                    {% render_field form.screenshot style="display: none" %}
+                    <div class="form-group">
+                        {% render_field form.title class+="form-control" placeholder="Title" %}
+                    </div>
+                    <div class="form-group">
+                        {% render_field form.description|attr:"cols:7"|attr:"rows:3" class+="form-control" style="resize: vertical" placeholder="Describe your problem..." %}
+                    </div>
+                    <div class="form-group row">
+                      	<label class="col-xs-4">Page</label>
+                        <span class="col-xs-8">{% render_field form.page class+="selectpicker" data-width="100%" %}</span>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <h5>Additional Information <span class='glyphicon glyphicon-question-sign' style='cursor: pointer' onclick='modalAlert("Additional Information", "The following information is not required to submit a problem report. It does, however, help us find and solve problems. Please complete the rest of the form the best you can.")' title='The following information is not required to submit a problem report. It does, however, help us find and solve problems. Please complete the rest of the form the best you can.'></span></h5>
+                    </div>
+                    <div class="form-group row">
+                       	<label class="col-xs-4">Login Status</label>
+                        <span class="col-xs-8">{% render_field form.login_status class+="selectpicker" data-width="100%" %}</span>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-4">Viewing Device</label>
+                        <span class="col-xs-8">{% render_field form.device class+="selectpicker" data-width="100%" %}</span>
+                    </div>
+                    <div style="height: 34px">
+                        <button name="photo" id="photo_upload" class="btn btn-default" onclick="document.getElementById('id_screenshot').click(); return false"><div class="filename" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">Screenshot (Optional)</div></button>
+                        <input class="btn btn-primary pull-right" type="submit" value="Submit"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+   	</div>
+    <script>$(document).ready(function() {$('.selectpicker').selectpicker(); });</script>
+    <!-- If a problem report has been submitted successfully display success modal and redirect to home. -->
+    {% if success == 'True' %}<script>$(window).load(function(){modalAlert('Your Submission Was Successful!', 'Thank you for your submission - our team will look into the issue shortly.', '<script>window.location="/";<\/script>');});</script>{% endif %}
+	<!-- Handle the display of screenshot filenames. -->
+	<script>$(document).ready(function(){$(".filename").each(function(){$('.upload').click(function(){$('#id_screenshot').click();});$("#id_screenshot").change(function(){var file=$('#id_screenshot').val().replace(/C:\\fakepath\\/i, '');if(file !== null){if($('.filename').val()!==null){$($('.filename')).empty();}$('<span>'+file+'</span>').appendTo('.filename');}});});});</script>
+{% endblock %}

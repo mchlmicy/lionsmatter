@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags %}
+{% load voting_tags_extended %}
+{% load post_tags %}
+{% load staticfiles %}
+{% load social_tags %}
+{% load i18n %}
+{% load get_username %}
+{% block title %}
+    {% if user.username == username %}
+    	LionsMatter | Profile
+    {% elif not user.is_authenticated %}
+    	LionsMatter | Redirect
+    {% else %}
+    	{% if userprofile.display_name and userprofile.display_name != "anonymous" %}
+			LionsMatter | {{ userprofile.display_name }}
+        {% else %}
+        	LionsMatter | {{ username }}
+    	{% endif %}
+    {% endif %}
+{% endblock %}
+{% block extra_head %}
+    <script src="{% static "js/profile.js" %}"></script>
+    <script src="{% static "js/post-actions_feed.js" %}"></script>
+{% endblock %}
+{% block content %}
+	{% if not user.is_authenticated %}
+    	<script>
+            var alertModalJSON = '{"header": "Please sign in", "body": "You must be signed in to view other users\' profiles.", "redirect": "/"}';
+            modalCustom('alert', alertModalJSON);
+        </script>
+   	{% else %}
+    	<div class="container top">
+            <div class="row-fluid">
+                <div class="col-sm-4">
+                    <div class="row-fluid well">
+                        {% if user.username = username %}
+                            {{ settings.full_name }}<br/>
+                        {% elif userprofile.display_name and userprofile.display_name != "anonymous" %}
+                            {{ userprofile.display_name }}<br/>
+                            {% if userprofile.major %}
+                            	{{ userprofile.major }}
+                                {% if userprofile.class_yr %}
+                                    <span class="text-muted">&bull;</span> {{ userprofile.class_yr }}
+                                {% endif %}
+                            	<br/>
+                            {% elif userprofile.class_yr %}
+                                 Class of {{ userprofile.class_yr }}<br/>
+                            {% endif %}
+                        {% else %}
+                            {{ username }}<br/>	
+                        {% endif %}
+                    </div>
+                    {% if user.username != username and userprofile.display_name and userprofile.display_name != "anonymous" %}
+                        <div class="panel-group row-fluid" id="actionsmenu" style="margin-bottom: 15px">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" data-toggle="collapse" data-parent="#actionsmenu" href="#actionoptions" style="cursor: pointer">
+                                    <h4 class="panel-title">
+                                        <span class="accordion-toggle">
+                                            Contact
+                                        </span> 
+                                    </h4>
+                                </div>
+                                <div id="actionoptions" class="panel-collapse">
+                                    <div class="feed-list panel-body">
+                                        <h6>{% trans "Message" %}</h6>
+                                        <div class="title"><a href="mailto:{{ userprofile.user.email }}">Send an Email</a></div>
+                                        <div class="title"><a href="/messages/compose/{{ username }}">Send a Message</a></div>
+                                    </div>
+                                </div>
+                                <script>
+                                    //Collapses feed if in mobile, expands feed if not
+                                    //Must be here so the CSS classes are appended immediately after the element is rendered.
+                                    if($(window).width()>767){$('#actionoptions').addClass('in');}
+                                    else{$('#actionoptions').addClass('collapse');}
+                                </script>
+                            </div>
+                        </div>
+					{% endif %}
+                    <div class="panel-group row-fluid" id="historymenu" style="margin-bottom: 15px">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" data-toggle="collapse" data-parent="#historymenu" href="#historyfeeds" style="cursor: pointer">
+                                <h4 class="panel-title">
+                                    <span class="accordion-toggle">
+                                        History
+                                    </span> 
+                                </h4>
+                            </div>
+                            <div id="historyfeeds" class="panel-collapse">
+                                <div class="feed-list panel-body">
+                                    <h6>{% trans "Post History" %}</h6>
+                                    <div class="title"><a href="#" onclick="event.preventDefault(); get('posts');">Posts</a></div>
+                                    <div class="title"><a href="#" onclick="event.preventDefault(); get('comments');">Comments</a></div>
+                                    <!-- If user's profile... -->
+                                    {% if user.username == username %}
+                                        <hr/>
+                                        <h6>{% trans "Vote History" %}</h6>
+                                        <div class="title"><a href="#" onclick="event.preventDefault(); get('votes');">Votes</a></div>
+                                        <div class="title"><a href="#" onclick="event.preventDefault(); get('upvotes');">Upvotes</a></div>
+                                        <div class="title"><a href="#" onclick="event.preventDefault(); get('downvotes');">Downvotes</a></div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <script>
+                                //Collapses feed if in mobile, expands feed if not
+                                //Must be here so the CSS classes are appended immediately after the element is rendered.
+                                if($(window).width()>767){$('#historyfeeds').addClass('in');}
+                                else{$('#historyfeeds').addClass('collapse');}
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div id='recent_posts'>
+                        {% if recent_posts %}
+                            {% include page_template %}
+                            {% block js %}
+                                {{ block.super }}
+                                <script src="{% static 'js/endless-pagination.js' %}"></script>
+                                <script>$.endlessPaginate({paginateOnScroll: true,paginateOnScrollMargin: 50});</script>
+                            {% endblock %}
+                        {% else %}
+                            <div class="alert alert-info">{% trans "No posts were found." %}</div>
+                        {% endif %}
+                    </div>
+    			</div>
+            </div>
+       	</div>
+     	<script src="{% static "js/feed-menu-collapse.js"%}"></script>
+        <script src="{% static "js/profile-menu-collapse.js"%}"></script>
+	{% endif %}
+{% endblock %}

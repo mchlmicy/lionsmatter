@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}LionsMatter | How it Works{% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <link rel="stylesheet" href="{% static "css/howitworks.css" %}">
+    <link rel="stylesheet" href="{% static "css/info.css" %}">
+	<div class="container top info">
+    	<div class="row-fluid">
+            <div class="col-md-12">
+                <div class="jumbotron" style="padding-right: 0px">
+                    <div class="jumbotron-image" style="display: inline-block; float: left">
+                        <img src="{% static "img/logo/lionsmatter_logo.png" %}"/>
+                    </div>
+                    <div style="display: inline-block; line-height: 1">
+                        <h1 style="margin-bottom: 0px; margin-left: 19px">How it Works</h1>
+                        <desktoptablet><p style="font-size: 16px; line-height: 1; margin-left: 19px">Follow the process of posting to LionsMatter. Start to finish.</p></desktoptablet>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px 15px">
+            <div class="col-md-12" style="padding: 0px">
+                <div class="lead intro">
+                    <h1>Step 1: You post to LionsMatter</h1>
+                    <div class="col-sm-6" style="padding: 0px">
+                        <p>Got a question, comment, or suggestion for any department at TCNJ?  Here's your chance to tell us! Posts on LionsMatter are visible to everyone on campus.</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <img src="{% static "img/howitworks/post-input.png" %}" width="100%"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px 15px 24px 15px">
+            <div class="col-md-12" style="padding: 0px">
+                <div class="lead intro">
+                    <h3 class="text-muted">Details:</h3>
+                    <div class="col-sm-4 post-detail-column">
+                        <img class="img-rounded detail-displayname" src='{% static 'img/howitworks/post-displayname.png' %}' style="width: 50%">
+                        <p><strong>1. Pick your name.</strong><br/>You can post to LionsMatter using your full name, TCNJ username, or "anonymous" by setting the "post as" (<span class="glyphicon glyphicon-user"></span>) field.</p>
+                    </div>
+                    <div class="col-sm-4 post-detail-column">
+                        <img class="img-rounded detail-media" src='{% static 'img/howitworks/post-media.png' %}' style="width: 50%">
+                        <p><strong>2. Choose media.</strong><br/>You can add a relevant photo or Vine to your post and preview the image/Vine before submitting it.</p>
+                    </div>
+                    <div class="col-sm-4 post-detail-column">
+                        <img class="img-rounded detail-department" src='{% static 'img/howitworks/post-department.png' %}' style="width: 50%">
+                        <p><strong>3. Submit to a department.</strong><br/>You can select which department to submit your post to from the department dropdown option.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px 15px">
+            <div class="col-md-12" style="padding: 0px">
+                <div class="lead intro">
+                    <hr style="margin-bottom: 70px; margin-top: 24px"/>
+                    <h1>Step 2: The College Weighs In</h1>
+                    <div class="col-sm-6" style="padding: 0px">
+                        <p>Next, students at the college vote and comment on your post. Ultimately, the more attention a post receives the more visible it will become. In this way LionsMatter can reveal the most important issues on campus.</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <img src="{% static 'img/howitworks/post-voting.png' %}" width="100%"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 0px 15px">
+            <div class="col-sm-12" style="padding: 0px">
+                <div class="lead intro">
+                    <hr style="margin-bottom: 70px; margin-top: 24px"/>
+                    <h1>Step 3: Student Government Sorts Your Post</h1>
+                    <div class="col-sm-8" style="padding: 0px">
+                        <p>A group of dedicated Student Government members sort through the posts on LionsMatter making sure each is sent to the right place.</p>
+                    </div>
+                    <div class="col-sm-4" style="text-align: center">
+                        <img src="{% static 'img/logo/sg_logo.png' %}" style="display: inline-block"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-12">
+                <div class="lead intro">
+                    <hr style="margin-bottom: 70px; margin-top: 24px"/>
+                    <h1>Step 4: Keep Checking Back</h1>
+                    <p>A group of dedicated Student Government members sort through the posts on LionsMatter making sure each is sent to the right place.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-12">
+                <div class="lead intro" style="text-align: center">
+                    <hr style="margin-bottom: 70px; margin-top: 24px"/>
+                    <h1>You + LionsMatter = Solutions</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

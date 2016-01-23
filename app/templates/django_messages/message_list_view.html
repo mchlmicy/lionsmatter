@@ -1,0 +1,13 @@
+<div class="message">
+    <div class="message-body">
+        <h4><a href="{{ message.sender.get_absolute_url }}">{{ message.sender }}</a></h4>
+        <p>{{ message.body|linebreaksbr }}</p>
+    </div>
+    <div class="date" style="height: 20px">
+    	<span class="text-muted pull-right">
+    		{{ message.sent_at|date:_("DATETIME_FORMAT")}}
+    	</span>        
+    </div>
+   	{% ifnotequal message.sender request.user %}{% endifnotequal %}
+    <hr style="margin: 10px 0px"/>
+</div>

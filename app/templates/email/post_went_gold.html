@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	{% load staticfiles %}
+        
+    	<!--Third party css files.-->
+    	<link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    </head>
+    <body>
+        <div class="row-fluid">
+            Hey {% if user.get_full_name %}{{user.get_full_name}}{% else %}{{ user.username }}{% endif %},<br/><br/>
+            Your post recently earned a cumulative score of 15 - this means your post has been nominated by the LionsMatter community to be forwarded immediately!  Although SG typically sends posts to The College in the order they are submitted, your post has surpassed the popularity threshold and will move to the front of the queue.  You should receive another email shortly with additional details on where your post will be sent.  <br/>
+            To view your post on LionsMatter, <a href='http://lionsmatter.com{{ postLink }}'>click here</a>.<br/>
+            - The LionsMatter Team
+            </div>    
+		</div>
+	</body>
+</html>

@@ -1,0 +1,9 @@
+<script>
+    {% if request.user.is_staff %}
+if ( window.self === window.top ) {window.location = "http://tail.lionsmatter.com/dashboard/";}
+else {window.top.location.reload();}
+    {% else %}
+if ( window.self === window.top ) {window.location = "http://tail.lionsmatter.com/";}
+else {window.top.location.reload();}
+    {% endif %}
+</script>

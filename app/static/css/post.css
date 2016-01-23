@@ -1,0 +1,116 @@
+/* Post Page */
+.post-title
+{   cursor: default;
+    line-height: 28px;
+    margin-bottom: 6px;
+    margin-top: 12px;
+}
+.post-title .username
+{   max-width: 225px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.post-title .timestamp
+{   max-width: 215px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.post-content
+{   margin-bottom: 6px;
+}
+.post-content .post-description_mobile,
+.post-content .post-options_mobile
+{   font-size: 85%;
+    margin: 3px 0px;
+}
+.post-content .post-options_desktop
+{   font-size: 14px;
+    line-height: 1;
+    margin-bottom: 12px;
+}
+.post-content .post-options_desktop .share-links
+{   display: none;
+}
+
+.postdescription-header_desktop.has-media
+{   border-bottom: none;
+    border-bottom-left-radius: 0px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    -moz-border-radius-bottomright: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+    margin-bottom: 0px;
+}
+
+.vine-container iframe.vine-embed
+{   height: 220px;
+}
+.vine-container .load-message
+{
+    margin-top: 104px;
+}
+
+.post-photo_desktop
+{   border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    margin-bottom: 0px;
+}
+.postdescription-footer.has-media
+{   border-top: none;
+    border-top-left-radius: 0px;
+    -moz-border-radius-topleft: 0px;
+    -webkit-border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    -moz-border-radius-topright: 0px;
+    -webkit-border-top-right-radius: 0px;
+    box-shadow: none;
+}
+.postdescription-footer.has-vine
+{   position: relative;
+    top: -5px;
+}
+
+#post-panel
+{   border-top: none;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    padding: 0px;
+}
+#post-panel .panel
+{   background-color: #f5f5f5;
+    border-top-left-radius: 0px;
+    -moz-border-radius-topleft: 0px;
+    -webkit-border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    -moz-border-radius-topright: 0px;
+    -webkit-border-top-right-radius: 0px;
+}
+
+.comments
+{   margin: -1px;
+}
+.comments .comment
+{   background-color: #f2f2f2;
+    border-top: 1px solid #c0c0c0;
+    padding: 4.5px 9px;
+}
+.comments .comment.active
+{   background-color: rgba(255,255,0,.1);
+}
+.comments .comment .comment-header,
+.comments .comment .comment-footer
+{   font-size: 11px;
+}
+@media all and (max-width: 767px)
+{
+    .comments .comment .comment-content
+    {   font-size: 11px;
+        font-weight: 500;
+    }
+}
+

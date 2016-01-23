@@ -1,0 +1,300 @@
+{% extends "tail/base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags_extended %}
+{% load voting_tags %}
+{% load post_tags %}
+{% load staticfiles %}
+{% load i18n %}
+{% load get_username %}
+{% load get_category %}
+{% block extra_head %}
+	<link rel="stylesheet" href="{% static "css/post.css" %}">
+{% endblock %}
+{% block content %}
+	<div class="container top">
+    	<div class="row-fluid">
+		   	<div class="col-sm-8">
+            	<div class="row-fluid">
+                	<script>
+						var post_naturaltime = "{{post.timestamp|naturaltime}}";
+						var post_naturaltime_abbrv = post_naturaltime.replace("year","yr").replace("month", "mo").replace("week", "wk");
+					</script>
+                	<h3 style="line-height: 28px; margin-bottom: 6px; margin-top: 12px">
+                    	<mobile style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ post.user_displayname }}</mobile>
+                        <tablet><div style="display: inline-block; max-width: 225px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ post.user_displayname }}</div><div class="text-muted pull-right" style="max-width: 215px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><script>document.write(post_naturaltime_abbrv);</script></div></tablet>
+                   		<desktop><div style="display: inline-block; max-width: 315px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ post.user_displayname }}</div><div class="text-muted pull-right" style="max-width: 275px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{post.timestamp|naturaltime}}</div></desktop>
+                   	</h3>
+              		<div class="lead" style="margin-bottom: 3px">
+                    	{{ post.post | dynamic_content }}
+                   		<mobile>
+                        	<small class="text-muted">
+                            	Posted {{ post.timestamp }} &bull;
+                                {% if post.category.is_special %}<a href="http://www.lionsmatter.com/t/{{post.category.shortname}}">
+                                {% else %}<a href="http://www.lionsmatter.com/f/{{post.category.shortname}}">{% endif %}
+                                	{{ post.category.title }}
+                                </a>
+                            </small>
+                            <br/>
+                            <small class="text-muted">
+                            	{% if post.image %}
+                                	<a class="link-muted" style="font-weight: 500" href="{{ post.image_large.url }}">Photo</a> &bull;
+                                {% endif %}
+                           	</small>
+                        </mobile>
+                    </div>
+                    <desktoptablet><hr style="margin-top: 3px; margin-bottom: 9px"/></desktoptablet>
+                    <mobile>
+                        <div class="btn-group btn-group-justified" style="margin-bottom: 9px">
+                            <a href="#" id="postVoteUpM" onclick="event.preventDefault(); postVote('{{ post.id }}', 'up');" class="btn btn-default"><span id="postVoteUpTotalM">{% get_upvotes post.id %}</span> <span class="glyphicon glyphicon-arrow-up"></span></a>
+                            <a href="#" id="postVoteDownM" onclick="event.preventDefault(); postVote('{{ post.id }}', 'down');" class="btn btn-default"><span id="postVoteDownTotalM">{% get_downvotes post.id %}</span> <span class="glyphicon glyphicon-arrow-down"</span></a>
+                        </div>
+                    </mobile>
+                    <script>
+						$(document).ready(function()
+						{
+							//Remove #'s from URLs on anchor clicks
+							$("a#option-comments").click(function(event){event.preventDefault(); tailresponseTab('comments')});
+							$("a#option-respond").click(function(event){event.preventDefault(); tailresponseTab('respond')});
+                            current_status = $('#id_status_code').val();
+                            if(current_status == '1'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                            if(current_status == '2'){
+                                    $('#status_dept').show();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                            if(current_status == '3'){
+                                    $('#status_dept').show();
+                                    $('#status_email').show();
+                                    $('#status_flag').hide();
+                                }
+                            if(current_status == '4'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                            if(current_status == '5'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                            if(current_status == '6'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').show();
+                                }
+                            if(current_status == '9'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                            $('#id_status_code').on('change', function (e) {
+                                var optionSelected = $("option:selected", this);
+                                var valueSelected = this.value;
+                                $('#updateStatus').removeClass('disabled');
+                                if(valueSelected == '1'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                                if(valueSelected == '2'){
+                                    $('#status_dept').show();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                                if(valueSelected == '3'){
+                                    $('#status_dept').show();
+                                    $('#status_email').show();
+                                    $('#status_flag').hide();
+                                }
+                                if(valueSelected == '4'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                                if(valueSelected == '5'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                                if(valueSelected == '6'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').show();
+                                }
+                                if(valueSelected == '9'){
+                                    $('#status_dept').hide();
+                                    $('#status_email').hide();
+                                    $('#status_flag').hide();
+                                }
+                            });
+						});
+
+						function tailresponseTab(tab)
+						{
+							var comment_opt = $('a#option-comments'), respond_opt = $('a#option-respond');
+							var comment_tab = $('#detail-comments'),  respond_tab = $('#detail-respond');
+
+							if(tab=='comments')
+							{
+								if(respond_tab.css('display','inherit'))
+								{
+									respond_tab.css('display','none'); comment_tab.css('display','inherit');
+									respond_opt.removeClass('active'); comment_opt.addClass('active');
+								}
+							}
+							else if(tab=='respond')
+							{
+								if(comment_tab.css('display','inherit'))
+								{
+									comment_tab.css('display','none'); respond_tab.css('display','inherit');
+									comment_opt.removeClass('active'); respond_opt.addClass('active');
+								}
+							}
+						}
+                    </script>
+                    <div class="btn-group btn-group-justified">
+                    	<a id="option-comments" href="#" class="btn btn-default" style="border-bottom-left-radius: 0px">Comments</a>
+                        <a id="option-respond" href="#" class="btn btn-default active" style="border-bottom-right-radius: 0px">Status</a>
+                    </div>
+                    <div class="well" style="padding: 0px; border-top: none; border-top-left-radius: 0px; border-top-right-radius: 0px">
+                        <div id="detail-comments" style="display: none">
+                         	{% get_comment_list for post as comment_list %}
+                            {% if comment_list %}
+                                <div id="comments-{{ post.id }}" class="comments">
+                                    {% for comment in comment_list %}
+                                        <div class="comment">
+                                            {% if comment.user_name != 'anonymous' %}
+                                                {% if comment.user.get_profile.department %}
+                                                    <a href="#" class="modal-custom response-link" style="margin-right: 9px" onclick="modalCustom('department-badge', '{{ comment.user.get_profile.full_name }}', 'http://lionsmatter.com/{{ comment.user.username }}', '{{ comment.user.get_profile.staff_position }}', '{{ comment.user.get_profile.department }}', '{{ comment.user.get_profile.bio }}', '{{ comment.user.get_profile.department.address }}', '{{ comment.user.get_profile.department.email }}', '{{ comment.user.get_profile.department.phone }}')">{{ comment.user.get_profile.full_name }}</a>
+                                                    <span class="label label-default">{{ comment.user.get_profile.department }}</span>
+                                                {% else %}
+                                                    <a href="http://lionsmatter.com/{{ comment.user }}" class="link-nounderline">{{ comment.user_name }}</a>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">anonymous</span>
+                                            {% endif %}
+                                            <span class="text-muted pull-right">{{ comment.submit_date|naturaltime }}{% if user.is_authenticated and user.id == comment.user_id %}<a href="#" class="close delete-comment" onclick="deleteC('{{comment.id}}')" style="line-height: .9; margin-left: 9px">&times;</a>{% endif %}</span>
+                                            <p>{{ comment.comment }}</p>
+                                            <hr style="margin: 10px -9px"/>
+                                        </div>
+                                    {% endfor %}
+                             	</div>
+                             {% else %}
+                              	<div id="comments-{{ post.id }}" class="comments">
+                                	<div class="comment">
+                                      	<p><strong><center>No comments at this time.</center></strong></p>
+                                    </div>
+                               	</div>
+                        	{% endif %}
+                        </div>
+                        <div id="detail-respond"  style="display: inherit; padding: 9px">
+                             <form method="post" id="statusUpdateForm">
+                   	            {% csrf_token %}
+                            	<div id="comment_on_{{ post.id }}">
+                                    {% if form.response.errors %}<div class="alert alert-warning"><strong>Error:</strong> {{ form.response.errors|striptags }}</div>{% endif %}
+                                    <div class="row">
+                                    	<div class="col-xs-3">
+                                    		<label style="line-height: 2">Post status</label>
+                                        </div>
+                                        <div class="col-xs-9">
+                                            {% render_field form.status_code class+="selectpicker" data-width="100%" %}
+										</div>
+                                	</div>
+                                    <div class="row" id="status_dept">
+                                    	<div class="col-xs-3">
+                                    		<label style="line-height: 2">Department</label>
+                                        </div>
+                                        <div class="col-xs-9">
+                                            {% render_field form.status_recipient_dept class+="selectpicker" data-width="100%" %}
+										</div>
+                                	</div>
+                                    <div class="row" style="margin-bottom: 9px" id="status_email">
+                                    	<div class="col-xs-3">
+                                    		<label style="line-height: 2">Department email</label>
+                                        </div>
+                                        <div class="col-xs-9">
+                                            {% render_field form.status_recipient_email class+="form-control" placeholder="Email" width="100%" %}
+                                      	</div>
+                                	</div>
+                                    <div class="row" id="status_flag">
+                                        {% render_field form.flag|attr:"cols:7"|attr:"rows:3" class+="form-control" style="resize: vertical" placeholder="Please specify a reason for flagging this post..." %}
+                                    </div>
+                                    <hr style="margin: 10px 0px"/>
+                                    <input id="updateStatus" class="btn btn-default btn-block disabled"type="submit" value="Update status"></input>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+            	<div class="row-fluid">
+                    <desktoptablet>
+                        <div class="well">
+                        	{% score_for_object post as score %}
+                        	{% vote_by_user user on post as vote %}
+                            <center><h1 id="postVotePercent" style="font-size: 72px; margin-top: 0px">{% get_percent post.id %}%</h1></center>
+                            <div class="btn-group btn-group-justified">
+                                <a id="postVoteUp" class="btn btn-default"><span id="postVoteUpTotal">{% get_upvotes post.id %}</span> <span class="glyphicon glyphicon-arrow-up"></span></a>
+                                <a id="postVoteDown" class="btn btn-default"><span id="postVoteDownTotal">{% get_downvotes post.id %}</span> <span class="glyphicon glyphicon-arrow-down"></span></a>
+                            </div>
+                        </div>
+                    </desktoptablet>
+                    <desktop>
+                    	<div class="well">
+                        	<p><strong>Posted on</strong> {{ post.timestamp }}</p>
+                            <p><strong>Posted under</strong>
+                            	{% if post.category.is_special %}<a href="http://www.lionsmatter.com/t/{{post.category.shortname}}">
+                                {% else %}<a href="http://www.lionsmatter.com/f/{{post.category.shortname}}">{% endif %}
+                                	{{ post.category.title }}
+                                </a>
+                          	</p>
+                        </div>
+                        <div class="well">
+                            <center><strong>Status Codes</strong></center>
+                        	<p><strong>Received:</strong> The post has been received by the system, but no action has been taken.</p>
+                            <p><strong>Sorted:</strong> The post has been delegated to a department.</p>
+                            <p><strong>Forwarded:</strong> The post has been forwarded to a department and is now accepting responses.</p>
+                            <p><strong>Response:</strong> A department member has submitted a response to the post.</p>
+                            <p><strong>Mediation:</strong> A department member has responded, and can continue discussing the post with the user and commenters.</i></p>
+                            <p><strong>Flagged:</strong> The post violates the LionsMatter terms, and will no longer be visible to the public.</p>
+                            <p><strong>Resolved:</strong> The post has been resolved - both the user and department are happy with the outcome.</p>
+                        </div>
+                    </desktop>
+                    <tablet>
+                        <div class="well">
+                        	<strong>Posted on</strong>
+                            <p>{{ post.timestamp }}</p>
+                            <strong>Posted under</strong>
+                            <p><a href="#category">{{ post.category.title }}</a></p>
+                            {% if user.is_authenticated and user.id == post.user_id %}<hr/><center><a href="#" class="delete-post" onclick="deleteP('{{ post.id }}')">{% trans "Delete this post" %}</a></center>{% endif %}
+                        </div>
+                    </tablet>
+                    {% if post.image %}
+                        <desktoptablet>
+                            <div class="well">
+                                <strong>Photo</strong>
+                                <a href="#" class="modal-custom thumbnail" onclick="modalCustom('post-photoattachment','{{ post.user_displayname }}', '{% if post.user_displayname != 'anonymous' %}{% url 'userprofile' username=post.user.username %}{% endif %}', '{{ post.timestamp|naturaltime }}', '{{ post.image_large.url }}', 'Close')" style="margin-bottom: 0px; margin-top: 9px; max-height: 33%; max-width: 33%" title="View Photo">
+                                	<img src="{{ post.image_thumbnail.url }}" style="width: 100%"/>
+                                </a>
+                            </div>
+                        </desktoptablet>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static "js/postdetails.js"%}"></script>
+
+    <script>$(document).ready(function() {$('.selectpicker').selectpicker(); });</script>
+    <!-- If a problem report has been submitted successfully display success modal and redirect to home. -->
+    {% if success == 'True' %}<script>$(window).load(function(){modalAlert('Your Submission Was Successful!', 'Thank you for your submission - our team will look into the issue shortly.', '<script>window.location="/";<\/script>');});</script>{% endif %}
+	<!-- Handle the display of screenshot filenames. -->
+	<script>$(document).ready(function(){$(".filename").each(function(){$('.upload').click(function(){$('#id_screenshot').click();});$("#id_screenshot").change(function(){var file=$('#id_screenshot').val().replace(/C:\\fakepath\\/i, '');if(file !== null){if($('.filename').val()!==null){$($('.filename')).empty();}$('<span>'+file+'</span>').appendTo('.filename');}});});});</script>
+{% endblock %}

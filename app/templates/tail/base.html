@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>tail</title>
+        <meta name="Content-Type" content='text/html; charset=UTF-8'/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		{% load staticfiles %}
+        {% load truncchar_tag %}
+        {% load inbox %}
+        {% load i18n %}
+        {% load url from future %}
+        {% load subdomainurls %}
+	  	
+        <!--Third party css files.-->
+    	<link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/bootstrap-select.css" %}">
+        <link rel="stylesheet" href="{% static "google/prettify.css" %}">
+        
+        <!--Third party to own bridge css files.-->
+        <link rel="stylesheet" href="{% static "css/modal.css" %}">
+        <link rel="stylesheet" href="{% static "css/navbar.css" %}">
+        
+        <!--Own css files.-->
+        <link rel="stylesheet" href="{% static "css/css.css" %}">
+        <link rel="stylesheet" href="{% static "css/feed.css" %}">
+        <link rel="stylesheet" href="{% static "css/post-textarea.css" %}">
+        <link rel="stylesheet" href="{% static "css/signin.css" %}">
+
+        <!--Icon files.-->
+    	<link rel="shortcut icon" href="{% static "icons/favicon.png" %}">
+    		
+    	<!--jQuery-->
+        <script src="{% static "js/jquery-1.10.2.min.js"%}"></script>
+    
+    	<!--Third party scripts.-->
+        <script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+    	<script src="{% static "google/prettify.js" %}"></script>
+        <script src="{% static "js/bootstrap-select.js"%}"></script>
+        
+        <!--Third party to own bridge js files.-->
+        <script src="{% static "js/modal-custom.js"%}"></script>
+
+        <!--Own scripts. -->
+    	<script src="{% static "js/ajax-CSRF.js" %}"></script>
+    	<script src="{% static "js/navbar.js" %}"></script>
+    	<script src="{% static "js/signin.js" %}"></script>
+        <script src="{% static "js/voting.js" %}"></script>
+        <script src="{% static "js/comments.js" %}"></script>
+        <script src="{% static "js/delete_post.js" %}"></script>
+        <script src="{% static "js/delete_comment.js" %}"></script>
+        <script src="{% static "js/notifications.js" %}"></script>
+        <script src="{% static "js/sort_feed.js" %}"></script>
+
+        <!--[if lt IE 9]>
+   			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    	<![endif]-->
+
+    	{% block extra_head %}{% endblock %}
+	</head>
+	<body>
+    	<nav class="navbar navbar-fixed-top">
+  			<div class="container">
+  				<div class="navbar-header">
+				    <a class="navbar-toggle" href="#" id="toggle-navbar-collapse" onclick="collapseNavbar()">
+				      <span class="sr-only">toggle navigation</span>
+    				  <span class="icon-bar"></span>
+				      <span class="icon-bar"></span>
+				      <span class="icon-bar"></span>
+				    </a>
+				    <a class="navbar-brand" href="{% url 'tail_home' %}">tail</a>
+			  	</div>
+  				<div class="navbar-collapse collapse" id="navbar-collapse">
+  					<mobile>
+  						<ul class="nav navbar-nav" style="margin-top: 0px; margin-bottom: 0px">
+  							{% if user.is_authenticated %}
+  								<ul class="nav nav-tabs">
+									<li id="nav-pages_signedin"><a href="#" onclick="openSection('pages', 'signedin')">Pages</a></li>
+                                    <li id="nav-settings_signedin" class="pull-right"><a href="#" onclick="openSection('settings', 'signedin')"><span class="glyphicon glyphicon-cog"></span></a></li>
+                                	<li id="nav-notifications_signedin" class="pull-right">
+                                    	<a href="#" onclick="openSection('notifications', 'signedin')">
+                                    		<span class="glyphicon glyphicon-list"></span>
+                                        	{% if notification_count %}
+                                        		<span class="badge" style="position: absolute; right: 0px; top: 9px; margin-right: 3px">{{ notification_count }}</span>
+                                        	{% endif %}
+                                     	</a>
+                                   	</li>
+                                    <li id="nav-messages_signedin" class="pull-right">
+                                    	<a href="#" onclick="openSection('messages', 'signedin')">
+                                    		<span class="glyphicon glyphicon-envelope"></span>
+                                    		{% inbox_count as unread %}
+                                    		{% if unread > 0 %}
+                                    		    <span class="badge" style="position: absolute; right: 0px; top: 9px; margin-right: 3px">{{ unread }}</span>
+                                    		{% endif %}
+                                     	</a>
+                                   	</li>
+                                    <li id="nav-user_signedin"  class="pull-right"><a href="#" onclick="openSection('user', 'signedin')">{{ user.username }}</a></li>
+                                </ul>
+                        	{% else %}
+                                <ul class="nav nav-tabs">
+									<li id="nav-pages_signedout"><a href="#" onclick="openSection('pages', 'signedout')">Pages</a></li>
+                                    <li id="nav-signup" class="pull-right"><a href="#" onclick="window.location='#'">Signup</a></li>
+                               		<li id="nav-signin" class="pull-right"><a href="#" onclick="openSection('signin', 'signedout')">Signin</a></li>
+                                </ul>
+                            {% endif %}
+                        </ul>
+                        <div class="nav-pages-mobile">
+                            <div id="pages-mobile" class="nav-collapse collapse">
+                                <div class="container">
+                                    <ul class="nav navbar-nav">
+                                    	<li class="list-container">
+                                        	<a class="link" href="{% url 'tail_home' %}">{% trans "LionsMatter" %}</a>
+                                            <hr/>
+                                            <a class="link" href="{% url 'tail_about' %}">{% trans "About" %}</a>
+                                        	<a class="link" href="#">{% trans "How it Works" %}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% if user.is_authenticated %}
+                                <div id="user-mobile" class="nav-collapse collapse">
+                                    <div class="container">
+                                        <ul class="nav navbar-nav">
+                                        	<li class="list-container">
+                                            	<a class="link" href="#">{% url 'userprofile' username=request.user.username subdomain=None %}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="messages-mobile" class="nav-collapse collapse">
+                                    <div class="container">
+                                        <ul class="nav navbar-nav">
+                                           	<li class="list-container">
+                                            	{% for messages_unread in inbox_unread %}
+                                                	<a href="{{messages_unread.thread.get_absolute_url }}" class="item new">
+                                                	 	<h4 class="list-group-item-heading">{{ messages_unread.thread.latest_msg.sender }}</h4>
+                                                    	<p class="list-group-item-text">{{messages_unread.thread.latest_msg.body|truncatewords:8}}</p>
+                                                   	</a>
+                                            	{% endfor %}
+                                                {% for messages_read in inbox_read %}
+                                                    <a href="{{messages_read.thread.get_absolute_url }}" class="item">
+                                                      	<h4 class="list-group-item-heading">{{ messages_read.thread.latest_msg.sender }}</h4>
+                                                       	<p class="list-group-item-text">{{messages_read.thread.latest_msg.body|truncatewords:8}}</p>
+                                                    </a>
+                                                {% endfor %}
+                                                {% if not inbox_unread and not inbox_read %}
+                                                    <span class="item">
+                                                    	<h4 class="list-group-item-heading">No messages</h4>
+                                                        <p class="list-group-item-text">You don't have any messages at this time.</p>
+                                                    </span>
+                                                {% endif %}
+                                           	</li>
+                                            <li class="list-footer">
+                                            	<a href="{% url 'messages_inbox' %}" class="footer">{% trans "See all messages" %}</a>
+                                          	</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="notifications-mobile" class="nav-collapse collapse">
+                                    <div class="container">
+                                        <ul class="nav navbar-nav">
+                                            <li class="list-container">
+                                                {% if notification_queue %}
+                                        			{% for notification in notification_queue %}
+                                    	    			<a href="{% url 'post' post_id=notification.obj.post.id %}" class="item new">
+                                            	    		<h4 class="list-group-item-heading">{{ notification.title }}</h4>
+                                            	    		<p class="list-group-item-text"> {{ notification.content }}</p>
+                                              			</a>
+                                        			{% endfor %}
+                                    			{% endif %}
+                                    			{% if not notification_count_total %}
+                                    				<span class="item">
+                                            			<h4 class="list-group-item-heading">No notifications</h4>
+                        	                    		<p class="list-group-item-text">You don't have any notifications at this time.</p>
+                                            		</span>
+                                     			{% endif %}
+                                            </li>
+                                            <li class="list-footer">
+                                            	<a href="{% url 'notifications' %}" class="footer">{% trans "See all notifications" %}</a>
+                                        	</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="settings-mobile" class="nav-collapse collapse">
+                                    <div class="container">
+                                        <ul class="nav navbar-nav">
+                                            <li class="list-container">
+                                            	<a class="link" href="/settings/">{% trans "Settings" %}</a>
+                                            	<hr/>
+                                            	<a class="link" href="#">{% trans "Help" %}</a>
+                                          		<a href="#" class="link modal-custom" onclick="modalCustom('terms-of-service')">Terms of Service</a>
+                                        		<hr/>
+                                                <a class="link" href="{% url 'logout' %}">{% trans "Sign out" %}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div id="signin-mobile" class="nav-collapse collapse">
+                                    <div class="container">
+                                        <ul class="nav navbar-nav">
+                                            <div id="signinErrorsMobile"></div>
+                                            <form action="#" method="post" id="signinFormMobile">
+                                                <li style="margin-bottom: 9px"><input class="form-control" id="signin-navbar_email" name="email" placeholder="{% trans "Email" %}" onkeyup="if(event.keyCode == 13){signinValidate('mobile');}" type="text"></li>
+                                                <li style="margin-bottom: 9px"><input class="form-control" id="signin-navbar_password" name="password" placeholder="{% trans "Password" %}" onkeyup="if(event.keyCode == 13){signinValidate('mobile');}" type="password"></li>
+                                                <li><span class="pull-right"><a class="btn btn-default" href="{% url "login" %}" style="margin-right: 9px">Sign in with TCNJ</a><button class="btn btn-primary" id="signin-navbar" type="button" onclick="signinValidate('mobile');">{% trans "Sign in" %}</button></span></li>
+                                            </form>
+                                        </ul>
+                                    </div>
+                                </div>
+                            {% endif %}
+                    	</div>
+                        <script></script>
+                    </mobile>
+  					<desktoptablet>
+  						<ul class="nav navbar-nav">
+                            <li class="button"><a href="{% url 'tail_home' %}">LionsMatter</a></li>
+                        	<li class="button"><a href="{% url 'tail_about' %}">About</a></li>
+                        	<li class="button"><a href="#">How it Works</a></li>
+                        </ul>
+                        {% if user.is_authenticated %}
+                        	<ul class="nav navbar-nav pull-right">
+                            	<li class="button"><a href="{% url 'userprofile' username=request.user.username subdomain=None %}">{{ user.username }}</a></li>
+                            	<li><a> | </a></li>
+                                <li class="button dropdown">
+                                	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-envelope"></span>
+                                    {% inbox_count as unread %}
+                                    {% if unread > 0 %}
+                                        <span class="badge" style="position: absolute; right: 0px; top: 9px; margin-right: 3px">{{ unread }}</span>
+                                    {% endif %}
+                                    <ul class="dropdown-menu" style="width: 350px; max-height: 250px; overflow: auto">
+                                    	{% for messages_unread in inbox_unread %}
+                                            <div class="list-group">
+                                                <a href="{{messages_unread.thread.get_absolute_url }}" class="list-group-item new">
+                                                    <h4 class="list-group-item-heading">{{ messages_unread.thread.latest_msg.sender }}</h4>
+                        	                        <p class="list-group-item-text">{{messages_unread.thread.latest_msg.body|truncatewords:8}}</p>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                        {% for messages_read in inbox_read %}
+                                            <div class="list-group">
+                                                <a href="{{messages_read.thread.get_absolute_url }}" class="list-group-item">
+                                                    <h4 class="list-group-item-heading">{{ messages_read.thread.latest_msg.sender }}</h4>
+                        	                        <p class="list-group-item-text">{{messages_read.thread.latest_msg.body|truncatewords:8}}</p>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                        {% if not inbox_unread and not inbox_read %}
+                                        	<div class="list-group">
+                                                <span class="list-group-item">
+                                                    <h4 class="list-group-item-heading">No messages</h4>
+                        	                        <p class="list-group-item-text">You don't have any messages at this time.</p>
+                                                </span>
+                                            </div>
+                                        {% endif %}
+                                        <div class="list-group-footer">
+                                        	<center><a href="{% url 'messages_inbox' %}">{% trans "See all messages" %}</a></center>
+                                        </div>
+                                    </ul>
+                                </li>
+                                <li class="button dropdown">
+                                	<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    	<span class="glyphicon glyphicon-list"></span>
+                                        {% if notification_count %}
+                                        	<span class="badge" style="position: absolute; right: 0px; top: 9px; margin-right: 3px">{{ notification_count }}</span>
+                                        {% endif %}
+                                    </a>
+                                	<ul class="dropdown-menu" style="width: 350px; max-height: 250px; overflow: auto"">
+                                        {% if notification_queue %}
+                                            {% for notification in notification_queue %}
+                                                <div class="list-group" id='notifications{% if not notification.obj.notified %}-{{ notification.notification_ids }}{% endif %}'>
+                                                    <a href="{% url 'post' post_id=notification.obj.post.id %}" class="list-group-item{% if not notification.obj.notified %} new{% endif %}">
+                                                        <h4 class="list-group-item-heading">{{ notification.title }}</h4>
+                                                        <p class="list-group-item-text"> {{ notification.content }}</p>
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if not notification_count_total %}
+                                            <div class="list-group">
+                                                <span class="list-group-item">
+                                                    <h4 class="list-group-item-heading">No notifications</h4>
+                                                    <p class="list-group-item-text">You don't have any notifications at this time.</p>
+                                                </span>
+                                            </div>
+                                        {% endif %}
+                                        <div class="list-group-footer">
+                                        	<center><a href="{% url 'notifications' %}">{% trans "See all notifications" %}</a></center>
+                                        </div>
+                                    </ul>
+                                </li>
+                                <li class="button dropdown">
+                                	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog"></span></a>
+                                	<ul class="dropdown-menu">
+                                    	<li><a href="{% url "settings" %}">{% trans "Settings" %}</a></li>
+                                        <hr/>
+                                        <li><a href="#">{% trans "Help" %}</a></li>
+                                        <li><a href="#" class="modal-custom" onclick="modalCustom('terms-of-service')">Terms of Service</a></li>
+                                        <hr/>
+                                        <li><a href="{% url 'logout' %}">{% trans "Sign out" %}</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        {% else %}
+                        	<ul class="nav navbar-nav pull-right">
+                            	<li class="button"><a data-toggle="popover" id="signInPopover" href="#">{% trans "Sign in" %}</a></li>
+                                <li><a>|</a></li>
+                                <li class="button"><a href="#">{% trans "Sign up" %}</a></li>
+                            </ul>
+                            <div id="signin_options" style="display: none"><a href="{% url 'login' %}" class="btn btn-primary">Login with <b>TCNJ</b></a> <a href="#signin_modal" class="btn btn-primary" data-toggle="modal">LionsMatter</a></div>
+                        {% endif %}
+                    </desktoptablet> 
+  				</div>
+  			</div>
+    	</nav>
+        
+        <div class="modal fade" id="signin_modal" tabindex="-1" role="dialog" aria-labelledby="signin_modal_Label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Sign in to LionsMatter</h4>
+                    </div>
+                    <div class="modal-body">
+                     	<div id="signinErrors"></div>
+                     	<form action="#" method="post" id="signinForm">
+                        	{% csrf_token %}
+                        	<div class="form-group">
+                            	<label for="email">Email address</label>
+                             	<input type="email" class="form-control" name="email" placeholder="Enter email">
+                        	</div>
+                        	<div class="form-group">
+                            	<label for="password">Password</label>
+                            	<input type="password" class="form-control" name="password" placeholder="Password">
+                        	</div>
+                    	</div>
+                    	<div class="modal-footer">
+                        	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        	<button type="button" class="btn btn-primary" onclick="signinValidate()">Sign in</button>
+                    	</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+		{% block content %}
+        	Empty page
+        {% endblock %}
+    </body>
+	<!--Load large files with low priority after page has been loaded-->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static "icons/apple-touch-icon-144-precomposed.png" %}">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static "icons/apple-touch-icon-114-precomposed.png" %}">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static "icons/apple-touch-icon-72-precomposed.png" %}">
+	<link rel="apple-touch-icon-precomposed" href="{% static "icons/apple-touch-icon-57-precomposed.png" %}">
+</html>

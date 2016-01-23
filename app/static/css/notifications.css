@@ -1,0 +1,13 @@
+/* Notifications */
+.notification-title
+{	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.table-hover>tbody>tr.notification-unread td
+{	background-color: rgba(255,255,0,.1);
+}
+.table-hover>tbody>tr.notification-unread:hover td
+{	background-color: rgba(255,255,0,.2);
+}

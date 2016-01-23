@@ -1,0 +1,43 @@
+.navbar-form#signin label
+{	color: #eeeeee;
+	font-weight: bold;
+}
+
+#signin_cas_dropdown
+{	border: 2px solid #404040;
+	border-radius: 4px;
+	left: -300%;
+	padding: 0px;
+}
+
+#signin_cas_container
+{	border-radius: 2px;
+	height: 247px;
+    overflow: hidden;
+    position: relative;
+	width: 366px;
+}
+ 
+#signin_cas_iframe
+{	height: 1200px;
+	left: -15px;
+	position: absolute;
+    top: -103px;
+	width: 1200px;
+}
+
+@media all and (min-width: 767px) and (max-width: 979px)
+{
+	.navbar-form#signin input[type="password"].inline
+	{	display: inline;
+		width: 42%;
+	}
+	.navbar-form#signin input[type="text"].inline
+	{	display: inline;
+		width: 42%;
+	}
+}
+
+@media all and (max-width: 979px)
+{	.navbar-form#signin .btn{float: right;}
+}

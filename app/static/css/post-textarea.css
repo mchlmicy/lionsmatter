@@ -1,0 +1,67 @@
+/*Post-Textarea*/
+#post-textarea.well
+{	padding: 9px 9px 0px 9px;
+}
+
+#post-textarea button
+{	border-radius: 0px;
+	border-top: none;
+}
+#post-textarea button.btn-default
+{	background-color: transparent;
+	color: #606060;
+}
+#post-textarea button.btn-default:hover
+{	border-color: #cccccc;
+}
+
+#post-textarea .buttonpanel
+{	height: 33px;
+	margin-bottom: 9px;
+} 
+
+#post-textarea .btn-group
+{	margin-bottom: 9px;
+}
+#post-textarea .btn-group .btn-group
+{	margin-bottom: 0px;
+}
+
+#post-textarea .dropdown-menu li a:hover
+{	background-color: rgba(0,0,0,.75);
+	color: #ffffff;
+} 
+#post-textarea .dropdown-menu hr
+{	margin: 10px 0px;
+}
+
+#post-textarea #photo_error
+{	clear: both;
+	margin: 9px 0px;
+}
+#post-textarea #selectedImage,
+#post-textarea #selectedVine
+{	border: 5px dashed rgba(0,0,0,.5);
+	clear: both;
+	margin-bottom: 9px;
+	padding: 9px;
+}
+#post-textarea #selectedImage
+{   height: 150px;
+}
+#post-textarea #selectedVine
+{   height: 200px;
+}
+#post-textarea #selectedImage img
+{	height: 100%;
+}
+
+#post-textarea input[type="submit"]
+{	border-radius: 0px;
+	border-top: none;
+}
+
+#post-textarea textarea
+{	border-radius: 0px;
+	resize: vertical;
+}

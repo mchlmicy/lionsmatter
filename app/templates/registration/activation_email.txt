@@ -1,0 +1,9 @@
+Welcome to LionsMatter!
+
+Please click the link below to activate your account:
+http://lionsmatter.com/signup/activate/{{ activation_key }}
+
+If you did not create this account, please disregard this email, and the account will be deleted within 7 days.
+
+Regards,
+LionsMatter Moderators

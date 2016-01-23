@@ -1,0 +1,63 @@
+#history_feed
+{	margin-top: 57px; /* Only applied when page is rendered */
+	padding-top: 95px;
+}
+@media all and (max-width: 767px)
+{
+	#history_feed
+	{	margin-top: 18px;
+		padding-top: 151px;
+	}
+}
+
+.history-date
+{	margin-top: 54px;
+	padding: 4.5px 15px;
+}
+.history-date:first-child 
+{	margin-top: 0px;
+	position: absolute;
+	top: -1000px;
+}
+
+.history-date a
+{	color: #606060;
+	cursor: default;
+}
+.history-date a:hover
+{	color: #606060;
+	text-decoration: none;
+}
+
+.history-item
+{	border: 1px solid #404040;
+	border-radius: 4px;
+	box-shadow: none;
+	cursor: pointer;
+	height: 75px;
+	padding: 0px;
+}
+.history-item .history-badge
+{	background-color: rgba(64, 96, 128, 0.75);
+	float: left;
+	height: 73px;
+	width: 74px;
+} 
+.history-item .history-badge .badge-container
+{	color: #ffffff;
+	font-size: 2em;
+	padding: 17px 22px;
+}
+.history-item .content
+{	float: left;
+	max-width: 264px;
+	padding: 6px 4.5px;
+}
+.history-item .content blockquote
+{	height: 62px;
+	margin-bottom: 0px;
+	white-space: nowrap;
+} 
+.history-item .content blockquote p
+{	line-height: 2.25;
+} 

@@ -1,0 +1,110 @@
+#modal-dialog .dialog-body
+{	background-color: #ffffff;
+	font-family: "Trebuchet MS", Arial, Helvetica, Sans-Serif;
+	display: none;
+	position: fixed;
+	z-index: 9999;
+}
+
+#mask
+{	background-color: #000000;
+	display: none;
+	position: absolute;
+	z-index: 9000;
+}
+
+.dialog-header
+{	background-color: #005180;
+	color: #ffffff;
+	font-size: 36px;
+	padding: 9px 0px;
+	text-align: center;
+	text-decoration: underline;
+	width: 100%;
+}
+
+.dialog-content
+{	padding: 10px 72px;
+}
+
+.validateTips	
+{	color: #800000;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.error
+{	background-color: #ffbfbf;
+	border: 1px solid #800000;
+	color: #800000;
+	padding: 2px;
+}	
+
+.error_textonly
+{	color: #800000;
+}
+
+label
+{	color: #005180;
+	font-size: 18px;
+	font-weight: bold;
+	padding-right: 9px;
+}
+
+.buttonset
+{	background-color: #406880;
+	color: #ffffff;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 18px;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+}
+
+.buttonset_button
+{	cursor: pointer;
+	display: inline-block;
+	padding: 2px 6px;
+}
+
+.buttonset_button:hover 
+{	background-color: #5f9cbf;
+}
+
+.buttonset_button:active 
+{	background-color: #4f819e;
+}
+
+.dialog-footer
+{	background-color: #607480;
+	height: 30px;
+	padding: 3px 0px;
+	width: 100%;
+}
+
+.dialog-buttonpanel
+{	float: right;
+}
+
+button.dialog
+{	background-color: #406880;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border: 1px solid #303a40;
+	display: inline-block;
+	color: #ffffff;
+	font-size: 18px;
+	padding: 2px 6px;
+	margin-right: 9px;
+}
+
+button.dialog:hover 
+{	background-color: #5f9cbf;
+}
+
+button.dialog:active 
+{	background-color: #4f819e;
+}
+	

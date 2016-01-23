@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>{% block title %}LionsMatter{% endblock %}</title>
+        <meta name="Content-Type" content='text/html; charset=UTF-8'/>
+        <meta name="Description" content="{% block meta_description %}LionsMatter is a platform for the TCNJ community to publicly express concerns, comments, and suggestions.{% endblock %}">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		{% load staticfiles %}
+		{% load url from future %}
+
+		
+        <!--Third party css files.-->
+    	<link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/bootstrap-select.css" %}">
+        <link rel="stylesheet" href="{% static "google/prettify.css" %}">
+        
+        <!--Third party to own bridge css files.-->
+        <link rel="stylesheet" href="{% static "css/modal.css" %}">
+        <link rel="stylesheet" href="{% static "css/navbar.css" %}">
+        
+        <!--Own css files.-->
+        <link rel="stylesheet" href="{% static "css/css.css" %}">
+        <link rel="stylesheet" href="{% static "css/feed.css" %}">
+        <link rel="stylesheet" href="{% static "css/signin.css" %}">
+    	
+        <!--Icon files.-->
+    	<link rel="shortcut icon" href="{% static "icons/favicon.png" %}">
+    		
+    	<!--jQuery-->
+        <script src="{% static "js/jquery-1.10.2.min.js"%}"></script>
+    
+    	<!--Third party scripts.-->
+        <script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+    	<script src="{% static "google/prettify.js" %}"></script>
+        <script src="{% static "js/bootstrap-select.js"%}"></script>
+        
+        <!--Third party to own custom js files.-->
+        <script src="{% static "js/modal-alert.js"%}"></script>
+        <script src="{% static "js/modal-custom.js"%}"></script>
+        
+        <!--Own scripts. --> 
+    	<script src="{% static "js/navbar.js" %}"></script>
+    	<script src="{% static "js/signin.js" %}"></script>
+        
+
+
+        <!--[if lt IE 9]>
+   			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    	<![endif]-->
+
+    	{% block extra_head %}{% endblock %}
+	</head>
+	<body>
+    	<nav class="navbar navbar-fixed-top">
+  			<div class="container">
+  				<div class="navbar-header">
+				    <a class="navbar-toggle" href="#" id="toggle-navbar-collapse" onclick="collapseNavbar()">
+				      <span class="sr-only">toggle navigation</span>
+    				  <span class="icon-bar"></span>
+				      <span class="icon-bar"></span>
+				      <span class="icon-bar"></span>
+				    </a>
+				    <a class="navbar-brand" href="/">LionsMatter</a>
+			  	</div>
+  				<div class="navbar-collapse collapse" id="navbar-collapse">
+  					<mobile> 
+  						<ul class="nav navbar-nav" style="margin-top: 0px; margin-bottom: 0px">
+                                <ul class="nav nav-tabs">
+									<li id="nav-pages_signedout" style="width: 33%"><a href="#" onclick="openSection('pages', 'signedout')">Pages</a></li>
+                                    <li id="nav-signup" style="width: 33%"><a href="#" onclick="window.location='/signup'">Signup</a></li>
+                               		<li id="nav-signin" style="width: 33%"><a href="#" onclick="openSection('signin', 'signedout')">Signin</a></li>
+                                </ul>
+                        </ul> 
+                        <div id="pages-mobile" class="nav-collapse collapse"> 
+                        	<div class="container">
+                                <ul class="nav navbar-nav"> 
+                                    <li><a href="/about">About</a></li>
+                                	<li><a href="/wordpress/">Blog</a></li>
+                                    <hr style="margin: 10px 0px"/>
+                                    <li><a href="/howitworks">How it Works</a></li>
+                                    <li><a href="http://www.tcnjsg.org/">Student Government</a></li>
+                                </ul> 
+							</div>
+                        </div>
+  					</mobile> 
+  					<desktoptablet> 
+  						<ul class="nav navbar-nav">
+                            <li class="button"><a href="/about">About</a></li>
+                        	<li class="button"><a href="/wordpress/">Blog</a></li>
+                            <li class="button"><a href="/howitworks">How it Works</a></li>
+                            <li class="button"><a href="http://tcnjsg.org/">TCNJ SG</a></li>
+                        </ul>
+                    </desktoptablet> 
+  				</div>
+  			</div>
+    	</nav>
+       
+		{% block content %}
+        	Empty page
+        {% endblock %}
+	</body>
+</html>

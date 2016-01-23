@@ -1,0 +1,90 @@
+{% extends "tail/base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags %}
+{% load voting_tags_extended %}
+{% load post_tags %}
+{% load staticfiles %}
+{% load i18n %}
+{% load get_username %}
+{% load get_category %}
+{% load social_tags %}
+{% block content %}
+	<div class="container top">
+    	<div class="row-fluid">
+    		<div class="col-sm-4">
+                <desktoptablet>
+                    <div class="panel-group row-fluid" id="menu-desktop" style="margin-bottom: 15px">
+                	    <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <span class="accordion-toggle">
+                                        Feed
+                                    </span>
+                                </h4>
+                            </div>
+                            <div class="feed-list panel-body">
+                                <h6>Feed <span class='glyphicon glyphicon-question-sign' title="All of the posts directed to you by LionsMatter." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="{% url 'tail_feed' feed='all' %}">All</a></div>
+                                <div class="title"><a href="{% url 'tail_feed' feed='queue' %}">Queued</a></div>
+                                <div class="title"><a href="{% url 'tail_feed' feed='responded' %}">Responded</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </desktoptablet>
+            </div>
+		   	<div class="col-sm-8">
+            	{% if user.is_authenticated and user.is_active %}
+                {% elif user.is_authenticated and not user.is_active %}
+                    <div class="alert alert-dismissable alert-warning">
+                    	<button aria-hidden="true" class="close" data-dismiss="alert" type="button">&times;</button>
+                        <b>{% trans "Note" %}:</b> {% trans "You cannot create posts until your account is active.  Feel free to comment and vote in the mean time." %}
+                    </div>
+                {% else %}
+                	<div class="alert alert-dismissable alert-warning">
+                    	<button aria-hidden="true" class="close" data-dismiss="alert" type="button">&times;</button>
+                        <b>{% trans "Note" %}:</b> {% trans "You must be signed in to post to LionsMatter." %} <br/>
+                        &bull; {% trans "Sign up to LionsMatter using your TCNJ email account" %}<br/>
+                   		&bull; {% trans "Or, sign up through TCNJ's authentication system" %}
+                    </div>
+                {% endif %}
+                <mobile>
+                    <div class="panel panel-default" id="menu" style="margin-bottom: 12px">
+                        <div class="panel-heading" data-toggle="collapse" data-parent="#menu" href="#feeds" style="border-color: transparent; cursor: pointer">
+                            <h4 class="panel-title">
+                                <span class="accordion-toggle">
+                                    Feed
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="feeds" class="panel-collapse collapse">
+                            <div class="feed-list panel-body">
+                                <h6>Feed <span class='glyphicon glyphicon-question-sign' title="All of the posts directed to you by LionsMatter." data-toggle="tooltip-1"></span></h6>
+                                <script>$('[data-toggle="tooltip-1"]').tooltip({'show':true, 'placement':'right'});</script>
+                                <div class="title"><a href="{% url 'tail_feed' feed='all' %}">All</a></div>
+                                <div class="title"><a href="{% url 'tail_feed' feed='queue' %}">Queued</a></div>
+                                <div class="title"><a href="{% url 'tail_feed' feed='responded' %}">Responded</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </mobile>
+				<div id='recent_posts'>
+                    {% if recent_posts %}
+                        {% include page_template %}
+                        {% block js %}
+                            {{ block.super }}
+                            <script src="{% static 'js/endless-pagination.js' %}"></script>
+                            <script>$.endlessPaginate({paginateOnScroll: true,paginateOnScrollMargin: 500});</script>
+                        {% endblock %}
+                    {% else %}
+                        <div class="alert alert-info">{% trans "No posts were found." %}</div>
+                    {% endif %}
+            	</div>
+    		</div>
+      	</div>
+   	</div>
+    <script src="{% static "js/post-actions_feed.js"%}"></script>
+    <script src="{% static "js/feed-menu-collapse.js"%}"></script>  
+{% endblock %}

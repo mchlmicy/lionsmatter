@@ -1,0 +1,75 @@
+.agenda-post
+{	border: 1px solid #404040;
+	border-radius: 4px;
+	box-shadow: none;
+	cursor: pointer;
+	padding: 0px;
+}
+
+.agenda-post .content
+{	height: 96px;
+	padding: 4.5px 9px;
+}
+.agenda-post .content:hover
+{	background-color: rgba(0,0,0,.05);
+}
+.agenda-post .content p
+{	font-size: 12px;
+	margin-bottom: 0px;
+	max-height: 63px;
+	overflow: hidden;
+}
+
+.agenda-post .vote
+{	cursor: default;
+	float: left;
+	height: 96px;
+	width: 50px;
+}
+.agenda-post .vote .arrow-up
+{	color: #ffffff;
+	height: 32px;
+	padding: 0px 18px;
+	padding-top: 6px;
+}
+.agenda-post .vote .arrow-down
+{	color: #ffffff;
+	height: 32px;
+	padding: 0px 18px;
+	padding-top: 8px
+}
+.agenda-post .vote .votes
+{	color: #ffffff;
+	height: 26px;
+	line-height: 2;
+}
+.agenda-post .vote .divider
+{	background-color: #ffffff;
+	height: 2px;
+	margin: 0px 16px;
+}
+.agenda-post .vote .divider:first-child
+{	margin-bottom: 4px;
+}
+.agenda-post .vote .divider:last-child
+{	margin-top: 4px; 
+}
+
+.agenda-post .content
+{	margin-left: 50px;
+	padding: 4.5px;
+}
+.agenda-post:hover .content
+{	background-color: rgba(0,0,0,.05);
+}
+.agenda-post .content p
+{	height: 46px;
+	margin-bottom: 9px;
+}
+.agenda-post .content .signature
+{	font-size: 12px;
+}
+.agenda-post .content .glyphicon
+{	color: #808080;
+	font-size: 30px;
+}

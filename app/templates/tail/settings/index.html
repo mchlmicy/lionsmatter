@@ -1,0 +1,75 @@
+{% extends "tail/base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load staticfiles %}
+{% load get_username %}
+{% block content %}
+	<!-- Set page title -->
+    <script>$(document).attr('title', 'tail | Settings');</script>
+    <link rel="stylesheet" href="{% static "css/settings.css" %}">
+    <div class="container top">
+    	<div class="row-fluid">
+        	<div class="col-md-3">
+        		<desktop>
+                	<div class="row-fluid">
+                    	<div class="list-group">
+                     		<a id="option-general" href="#" class="list-group-item active" onclick="settingsOption('general')">General</a>
+                      		<a id="option-notification" href="#" class="list-group-item" onclick="settingsOption('notification')">Notification</a>
+                      	</div>
+					</div>
+            	</desktop>
+                <mobiletablet>
+                	<ul id="settings-tabs" class="nav nav-tabs">
+  						<li class="active"><a href="#" id="tab-general" class="list-group-item" onclick="settingsOption('general')">General</a></li>
+                      	<li><a href="#" id="tab-notification" class="list-group-item" onclick="settingsOption('notification')">Notification</a></li>
+                    </ul>
+                </mobiletablet>
+			</div>
+            <div class="col-md-9">
+            	<div id="general-settings" style="visibility: visible">
+                	 <table class="table table-hover">
+                     	<thead><h4>General Settings <a class="pull-right" href="#" id="showEditGeneral"><mobile style="margin-right: 9px">Edit</mobile><desktoptablet>Edit</desktoptablet></a></h4></thead>
+                       	<tbody>
+                         	<tr class="setting" id="setting-name">{% csrf_token %}
+                             	<td class="col-sm-3"><h5>Name</h5></td>
+                                <td class="col-sm-8 value">{{ settings.full_name }}</td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Name', 'full_name', 'text', '{{ settings.full_name }}')">Edit</a></td>
+                            </tr>
+                            <tr class="setting" id="setting-position">
+                                <td class="col-sm-3"><h5>Position</h5></td>
+                                <td class="col-sm-8 value">{{ settings.staff_position }}</td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Position', 'position', 'text', '{{  settings.staff_position }}')">Edit</a></td>
+                            </tr>
+                            <tr class="setting" id="setting-bio">
+                                <td class="col-sm-3"><h5>Bio</h5></td>
+                                <td class="col-sm-8 value">{{ settings.bio }}</td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Bio', 'bio', 'textarea', '{{ settings.bio }}')">Edit</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+				</div>
+              	<div id="notification-settings">
+                	<table class="table table-hover">
+                    	<thead><h4>Notification Settings <a class="pull-right" href="#" id="showEditNotification"><mobile style="margin-right: 9px">Edit</mobile><desktoptablet>Edit</desktoptablet></a></h4></thead>
+                        <tbody>
+                      		<tr class="setting" id="setting-receive_notifications">
+                           		<td class="col-sm-3"><h5>Receive Notifications</h5></td>
+                                <td class="col-sm-8 value">
+                                	{% if settings.receive_notifications == 0 %}No{% else %}Yes{% endif %}
+                                </td>
+                               	<td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Receive Notifications', 'receive_notifications', 'radio', '{{ settings.receive_notifications }}')">Edit</a></td>
+                            </tr>
+                            <tr class="setting" id="setting-notification_email">
+                                <td class="col-sm-3"><h5>Receiving Email</h5></td>
+                                <td class="col-sm-8 value">{{ settings.notification_email }}</td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Receiving Email', 'notification_email', 'text', '{{ settings.notification_email }}')">Edit</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+				</div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static "js/settings-tail.js"%}"></script> 
+{% endblock %}

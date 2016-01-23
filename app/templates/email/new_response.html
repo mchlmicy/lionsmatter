@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	{% load staticfiles %}
+        
+    	<!--Third party css files.-->
+    	<link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    </head>
+    <body>
+        <div class="row-fluid">
+            Hey {% if user.get_full_name %}{{user.get_full_name}}{% else %}{{ user.username }}{% endif %},<br/><br/>
+            {{ status.status_recipient_dept }} has responded to your post:<br/>
+            <blockquote>
+            	<p>{{ status.status_recipient_response }}</p>
+            </blockquote><br/>
+            To view your post on LionsMatter, <a href='http://lionsmatter.com{{ postLink }}'>click here</a>.<br/>
+            - The LionsMatter Team
+            </div>    
+		</div>
+	</body>
+</html>

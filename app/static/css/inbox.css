@@ -1,0 +1,23 @@
+/* Inbox */
+/* Inbox Navigation Buttons */
+#showoptions_mobile .disabled:hover, 
+#messageoptions_mobile .disabled:hover
+{	cursor: not-allowed;
+}
+#showoptions_mobile a:hover, 
+#messageoptions_mobile a:hover
+{	text-decoration: none;
+}
+
+/* Inbox Table */
+#messagesTable>tbody>tr td.sender,
+#messagesTable>tbody>tr td.message,
+#messagesTable>tbody>tr td.date
+{	cursor: pointer;
+}
+#messagesTable>tbody>tr.new td
+{	background-color: rgba(255,255,0,.1);
+}
+#messagesTable>tbody>tr.new:hover td
+{	background-color: rgba(255,255,0,.2);
+}

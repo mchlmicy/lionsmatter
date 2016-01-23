@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load comments %}
+{% load widget_tweaks %}
+{% load voting_tags %}
+{% load staticfiles %}
+{% load get_username %}
+{% load get_category %}
+{% block title %}LionsMatter | Settings{% endblock %}
+{% block content %}
+    <link rel="stylesheet" href="{% static "css/settings.css" %}">
+    <div class="container top">
+    	<div class="row-fluid">
+        	<div class="col-md-3">
+        		<desktop>
+                	<div class="row-fluid">
+                    	<div class="list-group">
+                     		<a id="option-general" href="#" class="list-group-item active" onclick="settingsOption('general')">General</a>
+                      		<a id="option-about" href="#" class="list-group-item" onclick="settingsOption('about')">About</a>
+                      		<a id="option-notification" href="#" class="list-group-item" onclick="settingsOption('notification')">Notification</a>
+                      		<a id="option-privacy" href="#" class="list-group-item" onclick="settingsOption('privacy')">Privacy</a>
+                    	</div>
+					</div>
+            	</desktop>
+                <mobiletablet>
+                	<ul id="settings-tabs" class="nav nav-tabs">
+  						<li class="active"><a href="#" id="tab-general" class="list-group-item" onclick="settingsOption('general')">General</a></li>
+                      	<li><a href="#" id="tab-about" class="list-group-item" onclick="settingsOption('about')">About</a></li>
+                      	<li><a href="#" id="tab-notification" class="list-group-item" onclick="settingsOption('notification')">Notification</a></li>
+                      	<li><a href="#" id="tab-privacy" class="list-group-item" onclick="settingsOption('privacy')">Privacy</a></li>
+  					</ul>
+                </mobiletablet>
+			</div>
+            <div class="col-md-9">
+            	<div id="general-settings" style="visibility: visible">
+                	 <table class="table table-hover">
+                     	<thead><h4>General Settings <a class="pull-right" href="#" id="showEditGeneral"><mobile style="margin-right: 9px">Edit</mobile><desktoptablet>Edit</desktoptablet></a></h4></thead>
+                       	<tbody>
+                         	<tr class="setting" id="setting-name">{% csrf_token %}
+                             	<td class="col-sm-3"><h5>Name</h5></td>
+                                <td class="col-sm-8 value">{{ settings.full_name }}</td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Name', 'full_name', 'text', '{{ settings.full_name }}')">Edit</a></td>
+                            </tr>
+                            <tr class="setting" id="setting-email">
+                                <td class="col-sm-3"><h5>Email</h5></td>
+                                <td class="col-sm-8 value">{{ user.email }}</td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Email', 'email', 'text', '{{ user.email }}')">Edit</a></td>
+                            </tr>
+                            <tr class="setting" id="setting-password">
+                                <td class="col-sm-3"><h5>Password</h5></td>
+                                <td class="col-sm-8 value">Change your password <i class='glyphicon glyphicon-question-sign' style='cursor: pointer' onclick='window.location="{% url 'password_reset' %}"' title='Reset my password'></i></td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Password', 'password', 'texts', 'none')">Edit</a></td>
+                            </tr>
+                 		</tbody>
+                    </table>
+				</div>
+               	<div id="about-settings">
+               		<table class="table table-hover">
+                   		<thead><h4>About Settings <a class="pull-right" href="#" id="showEditAbout"><mobile style="margin-right: 9px">Edit</mobile><desktoptablet>Edit</desktoptablet></a></h4></thead>
+                        <tbody>
+                       		<tr class="setting" id="setting-class_yr">
+                          		<td class="col-sm-3"><h5>Class</h5></td>
+                                <td class="col-sm-8 value">{{ settings.class_yr }}</td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Class', 'class_yr', 'text', '{{ settings.class_yr }}')">Edit</a></td>
+                            </tr>
+                            <tr class="setting" id="setting-major">
+                           		<td class="col-sm-3"><h5>Major</h5></td>
+                              	<td class="col-sm-8 value">{{ settings.major }}</td>
+                              	<td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Major', 'major', 'text', '{{ settings.major }}')">Edit</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="notification-settings">
+                	<table class="table table-hover">
+                    	<thead><h4>Notification Settings <a class="pull-right" href="#" id="showEditNotification"><mobile style="margin-right: 9px">Edit</mobile><desktoptablet>Edit</desktoptablet></a></h4></thead>
+                        <tbody>
+                      		<tr class="setting" id="setting-receive_notifications">
+                           		<td class="col-sm-3"><h5>Receive Notifications</h5></td>
+                                <td class="col-sm-8 value">
+                                	{% if settings.receive_notifications == 0 %}No{% else %}Yes{% endif %}
+                                </td>
+                               	<td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Receive Notifications', 'receive_notifications', 'radio', '{{ settings.receive_notifications }}')">Edit</a></td>
+                            </tr>
+                            <tr class="setting" id="setting-notification_email">
+                                <td class="col-sm-3"><h5>Receiving Email</h5></td>
+                                <td class="col-sm-8 value">{{ settings.notification_email }}</td>
+                                <td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Receiving Email', 'notification_email', 'text', '{{ settings.notification_email }}')">Edit</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+				</div>
+                <div id="privacy-settings">	
+                  	<table class="table table-hover">
+                     	<thead><h4>Privacy Settings <a class="pull-right" href="#" id="showEditPrivacy"><mobile style="margin-right: 9px">Edit</mobile><desktoptablet>Edit</desktoptablet></a></h4></thead>
+                        <tbody>
+                        	<tr class="setting" id="setting-display_name">
+                          		<td class="col-sm-3"><h5>Default post as</h5></td>
+                             	<td class="col-sm-8 value">{{ settings.display_name }}</td>
+                               	<td class="col-sm-1 edit"><a href="#" class="pull-right" onclick="editSetting('Default post as', 'display_name', 'dropdown-postname', '{{ settings.display_name }}', '{{ settings.full_name }}', '{{ user.username }}')">Edit</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+				</div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static "js/settings.js"%}"></script> 
+{% endblock %}

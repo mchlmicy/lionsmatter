@@ -1,0 +1,115 @@
+{% extends "django_messages/base.html" %}
+{% load i18n %}
+{% load pagination_tags %}
+{% load truncchar_tag %}
+
+{% block title %}LionsMatter | Inbox{% endblock %}
+{% load staticfiles %}
+{% block extra_head %}
+	<link rel="stylesheet" href="{% static "css/inbox.css" %}"/>
+{% endblock %}
+{% block content %}
+    {% autopaginate thread_list 10 %}
+    <div class="container top" style="margin-bottom: 0px">
+    	<div class="row-fluid">
+            <div class="col-sm-6">
+                <h2>
+                    {% trans "Inbox" %}
+                   	<a class="label label-default pull-right" href="{% url 'messages_compose' %}" rel='facebox'>{% trans "Create message" %}</a>
+                </h2>
+            </div>
+            <div class="col-sm-6">
+                <h2>
+                    <form action="{% url 'messages_search' %}" method="GET">
+                      	<input type="text" title="{% trans 'Search Messages' %}" class="form-control" placeholder="{% trans 'Search Messages' %}" disabled/>
+                  	</form>
+             	</h2>
+        	</div>
+        </div>
+    </div>
+    <div class="container">
+		<mobile style="height: 98px; margin-bottom: 9px">
+        	<div class="row-fluid">		
+                <div class="col-sm-12">
+                    <div class="well">
+                        <form action="{% url 'messages_batch_update' %}" method="post">
+                            <div class="col-sm-6">
+                                {% csrf_token %}
+                                <div style="margin-bottom: 9px">
+                                    <strong>{% trans "Show" %}:</strong>
+                                    <span id="showoptions_mobile" style="margin-left: 9px">
+                                        {% if only_unread or only_read %}<a href="{% url 'messages_inbox' %}">{% trans "all" %}</a>
+                                        {% else %}<span class="text-muted disabled">{% trans "all" %}</span>{% endif %}
+                                        <span class="text-muted">&bull;</span>
+                                        {% if not only_read %}<a href="{% url 'messages_inbox' %}?only_read=1">{% trans "read" %}</a>
+                                        {% else %}<span class="text-muted disabled">{% trans "read" %}</span>{% endif %}
+                                        <span class="text-muted">&bull;</span>
+                                        {% if not only_unread %}<a href="{% url 'messages_inbox' %}?only_unread=1">{% trans "unread" %}</a>
+                                        {% else %}<span class="text-muted disabled">{% trans "unread" %}</span>{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div style="margin-bottom: 9px">
+                                    <strong>{% trans "Options" %}:</strong>
+                                    <span id="messageoptions_mobile" style="margin-left: 9px">
+                                        <span class="text-muted disabled">{% trans "mark as read" %}</span>
+                                        <span class="text-muted">&bull;</span>
+                                        <span class="text-muted disabled">{% trans "delete" %}</span>
+                                    </span>    
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        	</div>
+        </mobile>
+        <desktoptablet style="height: 69px">
+        	<div class="row-fluid">
+            	<form action="{% url 'messages_batch_update' %}" method="post" id='batchUpdate'>
+                  	<div class="col-sm-6">
+                        {% csrf_token %}
+                        <strong>{% trans "Show" %}:</strong>
+                        <ul class="nav nav-pills" style="margin-bottom: 9px">
+                            {% if only_unread or only_read %}<li><a href="{% url 'messages_inbox' %}">{% trans "all" %}</a></li>
+                            {% else %}<li class="disabled"><a>{% trans "all" %}</a></li>{% endif %}
+                            {% if not only_read %}<li><a href="{% url 'messages_inbox' %}?only_read=1">{% trans "read" %}</a></li>
+                            {% else %}<li class="disabled"><a>{% trans "read" %}</a></li>{% endif %}
+                            {% if not only_unread %}<li><a href="{% url 'messages_inbox' %}?only_unread=1">{% trans "unread" %}</a></li>
+                            {% else %}<li class="disabled"><a>{% trans "unread" %}</a></li>{% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>{% trans "Options" %}:</strong>
+                        <ul class="nav nav-pills" id="messageoptions_desktoptablet" style="margin-bottom: 9px">
+                            <li class="disabled"><a href="#" id="markmessage_desktop">{% trans "mark as read" %}</a></li>
+                            <li class="disabled"><a href="#" id="deletemessage_desktop">{% trans "delete" %}</a></li>
+                        </ul>
+                    </div>
+            </div>
+        </desktoptablet>
+    	<div class="row-fluid">
+          	<div class="col-sm-12">  
+                <form action="{% url 'messages_batch_update' %}" method="post">	
+                    <table id="messagesTable" class="table table-hover" style="display: inline-table">
+                        <thead><th></th><th>{% trans "From" %}</th><th>{% trans "Subject" %}</th><th>Received</th></thead>
+                        {% for message in thread_list %}
+                        	{% if message.new %}<tr class="new" data-link="{{message.thread.get_absolute_url }}">
+                            {% else %}<tr data-link="{{message.thread.get_absolute_url }}">
+                            {% endif %}
+                            	<td><input name="batchupdateids" type="checkbox" onchange="checkCheckboxes()" value="{{message.thread.pk}}" /></td>
+                                <td class="sender"><strong>{{ message.thread.latest_msg.sender }}</strong></td>
+                               	<td class="message">{{ message.thread.subject|truncchar:45 }}</td>
+                                <td class="date">{{ message.thread.latest_msg.sent_at|date:_("DATETIME_FORMAT") }}</td>
+							</tr>
+                       	{% empty %}
+                            <tr><td colspan="4"><center><strong>{% trans "No messages" %}</strong></center></td></tr>
+                        {% endfor %}
+                    </table>
+        		</form>
+           	</div>
+        </div>
+        <div class="messages-footer">{% paginate %}</div>
+	</div>
+    <script type="text/javascript" src="{% static "js/inbox.js" %}"></script>
+{% endblock %}

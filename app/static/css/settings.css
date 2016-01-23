@@ -1,0 +1,35 @@
+/* Settings */
+#general-settings,
+#about-settings,
+#notification-settings,
+#privacy-settings
+{	position: absolute;
+	top: 0px;
+	visibility: hidden;
+	width: 100%;
+}
+	
+#settings-tabs .list-group-item
+{	border: 1px solid #dddddd;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+#settings-tabs li.active .list-group-item
+{	background-color: #428bca;
+	border-color: #428bca;
+	color: #ffffff;
+}
+
+.setting .value,
+.setting .edit
+{	vertical-align: middle;
+}
+
+.setting .edit
+{	min-width: 150px;
+}
+
+.setting .edit a
+{	display: none; 
+}
+
